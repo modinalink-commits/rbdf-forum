@@ -1,0 +1,80 @@
+# RBDF public website (rbdf.org + holding pages for member/app/verify/api).
+# Auto-updates: every 60s the container checks site/VERSION in this repo and pulls changed files.
+services:
+  web:
+    image: nginx:alpine
+    restart: unless-stopped
+    mem_limit: 64m
+    command:
+      - sh
+      - -c
+      - |
+        B=https://raw.githubusercontent.com/modinalink-commits/rbdf-forum/main/site
+        H=/usr/share/nginx/html
+        sync() {
+          V=$$(wget -qO- "$$B/VERSION?ts=$$(date +%s)" | tr -dc 'a-z0-9.-')
+          [ -n "$$V" ] || return 1
+          [ "$$V" = "$$(cat /tmp/ver 2>/dev/null)" ] && return 0
+          rm -rf /tmp/n; mkdir -p /tmp/n
+          for f in $$(wget -qO- "$$B/manifest.txt?ts=$$(date +%s)"); do
+            wget -q -O /tmp/n/$$f "$$B/$$f" || return 1
+          done
+          [ $$(wc -c < /tmp/n/index.html) -gt 2000 ] || return 1
+          cp -f /tmp/n/* $$H/ && echo $$V > /tmp/ver && echo "SITE live $$V"
+        }
+        sync
+        nginx -g 'daemon off;' &
+        N=$$!
+        while true; do
+          sleep 60
+          kill -0 $$N 2>/dev/null || exit 1
+          sync || echo "SITE sync failed, keeping current"
+        done
+    configs:
+      - source: ngx
+        target: /etc/nginx/conf.d/default.conf
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.rbdf.rule=Host(`rbdf.org`) || Host(`www.rbdf.org`) || Host(`member.rbdf.org`) || Host(`app.rbdf.org`) || Host(`verify.rbdf.org`) || Host(`api.rbdf.org`)
+      - traefik.http.routers.rbdf.entrypoints=websecure
+      - traefik.http.routers.rbdf.tls.certresolver=letsencrypt
+      - traefik.http.services.rbdf.loadbalancer.server.port=80
+configs:
+  ngx:
+    content: |
+      server {
+        listen 80;
+        server_name www.rbdf.org;
+        return 301 https://rbdf.org$$request_uri;
+      }
+      server {
+        listen 80;
+        server_name rbdf.org;
+        root /usr/share/nginx/html;
+        index index.html;
+        server_tokens off;
+        charset utf-8;
+        gzip on;
+        add_header X-Content-Type-Options nosniff always;
+        add_header X-Frame-Options SAMEORIGIN always;
+        add_header Referrer-Policy strict-origin-when-cross-origin always;
+        add_header Strict-Transport-Security "max-age=31536000" always;
+        error_page 404 /hold.html;
+        location ~* \.png$$ { expires 7d; add_header Cache-Control "public, max-age=604800"; }
+        location = / { try_files /index.html =404; add_header Cache-Control "no-cache"; }
+        location / { try_files $$uri =404; }
+      }
+      server {
+        listen 80;
+        server_name member.rbdf.org app.rbdf.org verify.rbdf.org api.rbdf.org;
+        root /usr/share/nginx/html;
+        server_tokens off;
+        charset utf-8;
+        add_header X-Content-Type-Options nosniff always;
+        add_header X-Frame-Options SAMEORIGIN always;
+        add_header Strict-Transport-Security "max-age=31536000" always;
+        error_page 404 /hold.html;
+        location ~* \.png$$ { expires 7d; add_header Cache-Control "public, max-age=604800"; }
+        location = / { try_files /hold.html =404; add_header Cache-Control "no-cache"; }
+        location / { try_files $$uri =404; }
+      }
