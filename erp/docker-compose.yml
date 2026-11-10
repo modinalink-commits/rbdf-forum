@@ -1,5 +1,5 @@
 # RBF ERP (member portal, admin, receipts, verification) for member/app/verify/api.rbdf.org
-# Code auto-updates from this repo every 60s (erp/VERSION). Member data lives only in the erp-data volume.
+# Code auto-updates from this repo every 10s (erp/VERSION). Member data lives only in the erp-data volume.
 services:
   erp:
     image: node:22-alpine
@@ -30,11 +30,13 @@ services:
           node /app/server.js &
           P=$$!
           while kill -0 $$P 2>/dev/null; do
-            sleep 60
+            sleep 10
             R=$$(remote)
-            if [ -n "$$R" ] && [ "$$R" != "$$(cat /app/ver 2>/dev/null)" ]; then fetch && kill $$P; fi
+            if [ -n "$$R" ] && [ "$$R" != "$$(cat /app/ver 2>/dev/null)" ]; then
+              if fetch; then kill $$P; wait $$P; fi
+            fi
           done
-          sleep 2
+          sleep 1
         done
     labels:
       - traefik.enable=true
