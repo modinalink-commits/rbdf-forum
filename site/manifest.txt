@@ -40,3 +40,11 @@ gal-programmes.svg
 news-1.svg
 news-2.svg
 news-3.svg
+gal-gatherings.jpg
+gal-office.jpg
+gal-business.jpg
+gal-programmes.jpg
+proj-1.jpg
+proj-2.jpg
+proj-3.jpg
+proj-4.jpg
