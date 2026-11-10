@@ -2,3 +2,4 @@ index.html
 hold.html
 logo.png
 favicon.png
+pad.jpg
