@@ -1,0 +1,47 @@
+# RBF ERP (member portal, admin, receipts, verification) for member/app/verify/api.rbdf.org
+# Code auto-updates from this repo every 60s (erp/VERSION). Member data lives only in the erp-data volume.
+services:
+  erp:
+    image: node:22-alpine
+    restart: unless-stopped
+    mem_limit: 256m
+    environment:
+      - ERP_SEED=${ERP_SEED}
+      - DATA_DIR=/data
+      - NODE_NO_WARNINGS=1
+    volumes:
+      - erp-data:/data
+    command:
+      - sh
+      - -c
+      - |
+        B=https://raw.githubusercontent.com/modinalink-commits/rbdf-forum/main/erp
+        mkdir -p /app
+        remote() { wget -qO- "$$B/VERSION?ts=$$(date +%s)" | tr -dc 'a-z0-9.-'; }
+        fetch() {
+          V=$$(remote); [ -n "$$V" ] || return 1
+          wget -qO /app/s.new "$$B/server.js?ts=$$(date +%s)" || return 1
+          [ $$(wc -c < /app/s.new) -gt 5000 ] || return 1
+          node --check /app/s.new || return 1
+          mv /app/s.new /app/server.js && echo $$V > /app/ver && echo "ERP code $$V"
+        }
+        fetch || [ -f /app/server.js ] || exit 1
+        while true; do
+          node /app/server.js &
+          P=$$!
+          while kill -0 $$P 2>/dev/null; do
+            sleep 60
+            R=$$(remote)
+            if [ -n "$$R" ] && [ "$$R" != "$$(cat /app/ver 2>/dev/null)" ]; then fetch && kill $$P; fi
+          done
+          sleep 2
+        done
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.rbdferp.rule=Host(`member.rbdf.org`) || Host(`app.rbdf.org`) || Host(`verify.rbdf.org`) || Host(`api.rbdf.org`)
+      - traefik.http.routers.rbdferp.priority=100
+      - traefik.http.routers.rbdferp.entrypoints=websecure
+      - traefik.http.routers.rbdferp.tls.certresolver=letsencrypt
+      - traefik.http.services.rbdferp.loadbalancer.server.port=3000
+volumes:
+  erp-data:
