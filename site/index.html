@@ -9,7 +9,15 @@ button,input,textarea{font-family:inherit}
 .bn{font-family:'Hind Siliguri','Inter',sans-serif}
 a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #1CA270;outline-offset:2px}
 </style>
-<style>#dsk{display:block}#mob{display:none}@media(max-width:760px){#dsk{display:none}#mob{display:block}}</style></head><body><div id="dsk">
+<style>#dsk{display:block}#mob{display:none}@media(max-width:760px){#dsk{display:none}#mob{display:block}}</style><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"><style>
+.rb-map{background:#E3F5EC}.rb-map .leaflet-control-attribution{font-size:10px}
+.rb-pin{position:relative;width:44px;height:44px}.rb-pin i{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(16,138,96,.28);animation:rbpulse 2s ease-out infinite}
+.rb-pin b{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:#0F8A5F;border:4px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+@keyframes rbpulse{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.4);opacity:0}}
+@media(prefers-reduced-motion:reduce){.rb-pin i{animation:none}}
+.rb-pop{font:600 13px/1.4 system-ui,sans-serif;color:#262B38}.rb-pop small{display:block;font-weight:400;color:#5b6270;margin-top:2px}
+.rb-pop a{display:inline-block;margin-top:8px;padding:6px 12px;border-radius:8px;background:#0F8A5F;color:#fff!important;text-decoration:none;font-size:12px}
+</style></head><body><div id="dsk">
 
 <div style="background:#F5F6F8;color:#262B38;font-family:'Inter','Hind Siliguri',system-ui,sans-serif">
 
@@ -697,7 +705,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <a href="mailto:info@rbdf.org" style="display:flex;align-items:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;text-decoration:none">Email</a>
 </div>
 </div>
-<div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:12px"><div style="border-radius:22px;border:1px solid #CFE6DB;overflow:hidden;min-height:380px;flex:1;background:#E3F5EC"><iframe title="Map: SS Tower, 92 Station Road, Kotwali, Chattogram" src="https://www.google.com/maps?q=SS+Tower,+92+Station+Road,+Kotwali,+Chattogram,+Bangladesh&amp;hl=en&amp;z=16&amp;output=embed" width="100%" height="100%" style="border:0;display:block;min-height:380px" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div><a href="https://www.google.com/maps/search/?api=1&amp;query=SS+Tower,+92+Station+Road,+Kotwali,+Chattogram" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:12px;border:1px solid #CBD0DA;background:#fff;color:#262B38;font-weight:600;text-decoration:none">Open in Google Maps</a></div>
+<div style="flex:1 1 440px;min-width:0;display:flex;flex-direction:column;gap:12px"><div style="border-radius:22px;border:1px solid #CFE6DB;overflow:hidden;min-height:380px;flex:1;background:#E3F5EC"><div class="rb-map" role="application" aria-label="Map: SS Tower, 92 Station Road, Kotwali, Chattogram" style="width:100%;height:100%;min-height:380px"></div></div><a href="https://www.google.com/maps/search/?api=1&amp;query=SS+Tower,+92+Station+Road,+Kotwali,+Chattogram" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:12px;border:1px solid #CBD0DA;background:#fff;color:#262B38;font-weight:600;text-decoration:none">Get directions · Google Maps</a></div>
 </div>
 </section>
 
@@ -929,8 +937,8 @@ Phone: 01324884488<br>Email: info@rbdf.org<br>Web: www.rbdf.org<br>SS Tower, Gos
 <a href="https://wa.me/8801324884488" style="display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14px;text-decoration:none">WhatsApp</a>
 <a href="mailto:info@rbdf.org" style="display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14px;text-decoration:none">Email</a>
 </div>
-<div style="margin-top:14px;border-radius:14px;overflow:hidden;border:1px solid #CFE6DB"><iframe title="Map: SS Tower, 92 Station Road, Kotwali, Chattogram" src="https://www.google.com/maps?q=SS+Tower,+92+Station+Road,+Kotwali,+Chattogram,+Bangladesh&amp;hl=en&amp;z=16&amp;output=embed" width="100%" height="230" style="border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
-<a href="https://www.google.com/maps/search/?api=1&amp;query=SS+Tower,+92+Station+Road,+Kotwali,+Chattogram" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:8px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14px;text-decoration:none">Open in Google Maps</a>
+<div style="margin-top:14px;border-radius:14px;overflow:hidden;border:1px solid #CFE6DB"><div class="rb-map" role="application" aria-label="Map: SS Tower, 92 Station Road, Kotwali, Chattogram" style="width:100%;height:250px;min-height:250px"></div></div>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=SS+Tower,+92+Station+Road,+Kotwali,+Chattogram" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:8px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14px;text-decoration:none">Get directions · Google Maps</a>
 </div>
 </section>
 
@@ -1028,4 +1036,17 @@ var cs=[].slice.call(document.querySelectorAll('.stc'));function run(c){var v=c.
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){run(e.target)}else{e.target.classList.remove('go')}})},{threshold:.6});cs.forEach(function(c){io.observe(c)})}else cs.forEach(run)})()</script>
 <script>(function(){fetch('https://api.rbdf.org/v1/site-images').then(function(r){return r.json()}).then(function(d){var S=d&&d.slots||{};[].slice.call(document.querySelectorAll('[data-slot]')).forEach(function(el){var m=S[el.getAttribute('data-slot')];if(!m||!m.url)return;if(el.tagName==='IMG'){el.src=m.url;if(m.alt)el.alt=m.alt}else{var lb=el.getAttribute('data-label')||el.textContent;el.style.background='linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.6)),url("'+m.url+'") center/cover no-repeat';el.style.color='#fff';el.setAttribute('role','img');el.setAttribute('aria-label',m.alt||lb)}})}).catch(function(){})})()</script>
 <script>(function(){var els=[].slice.call(document.querySelectorAll('[data-slot^=gal-],[data-slot^=news-]')).map(function(e){return e.closest('[data-slot^=gal-]')||e.parentElement.parentElement});els.forEach(function(e,i){e.classList.add('rv');e.style.transitionDelay=(i%5)*90+'ms'});if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.15});els.forEach(function(e){io.observe(e)})}else els.forEach(function(e){e.classList.add('in')})})()</script>
-</body></html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>(function(){
+var P=[22.3362,91.8352],D='https://www.google.com/maps/dir/?api=1&destination=SS+Tower,+92+Station+Road,+Kotwali,+Chattogram';
+function go(){if(!window.L)return;[].forEach.call(document.querySelectorAll('.rb-map'),function(el){
+if(el.offsetParent===null||el._rb)return;el._rb=1;
+var m=L.map(el,{center:P,zoom:16,scrollWheelZoom:false});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(m);
+var ic=L.divIcon({className:'',html:'<div class="rb-pin"><i></i><b></b></div>',iconSize:[44,44],iconAnchor:[22,22]});
+L.marker(P,{icon:ic,title:'Riazuddin Bazar Business Development Forum'}).addTo(m)
+.bindPopup('<div class="rb-pop">Riazuddin Bazar Business Development Forum<small>SS Tower, 92 Station Road, Kotwali, Chattogram</small><a href="'+D+'" target="_blank" rel="noopener">Get directions</a></div>').openPopup();
+m.on('click',function(){m.scrollWheelZoom.enable()});
+setTimeout(function(){m.invalidateSize()},300);});}
+window.addEventListener('load',go);window.addEventListener('resize',function(){setTimeout(go,200)});
+})();</script></body></html>
