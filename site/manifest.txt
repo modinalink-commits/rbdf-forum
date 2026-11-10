@@ -32,3 +32,11 @@ proj-1.svg
 proj-2.svg
 proj-3.svg
 proj-4.svg
+og-logo.jpg
+gal-gatherings.svg
+gal-office.svg
+gal-business.svg
+gal-programmes.svg
+news-1.svg
+news-2.svg
+news-3.svg
