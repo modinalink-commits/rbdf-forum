@@ -186,7 +186,7 @@ async function deliver(id) {
   const i = integ(), s = i.sms; if (!s.on || !s.f.api_key) { run("UPDATE sms_log SET status='queued', err='SMS service not connected' WHERE id=?", id); return; }
   try {
     const key = dec(s.f.api_key); let url;
-    if (s.provider === 'BulkSMSBD') url = 'http://bulksmsbd.net/api/smsapi?' + new URLSearchParams({ api_key: key, type: 'text', number: '88' + normMobile(r.to_num), senderid: s.f.sender || '', message: r.msg });
+    if (s.provider === 'BulkSMSBD') url = 'http://bulksmsbd.net/api/smsapi?' + new URLSearchParams({ api_key: key, type: 'text', number: '88' + normMobile(r.to_num), senderid: s.f.sender || '8809648906742', message: r.msg });
     else url = String(s.f.api_url || '').replace('{to}', encodeURIComponent(normMobile(r.to_num))).replace('{msg}', encodeURIComponent(r.msg)).replace('{key}', encodeURIComponent(key));
     if (!/^https?:\/\//.test(url)) throw new Error('bad url');
     const ctl = new AbortController(); setTimeout(() => ctl.abort(), 15000);
