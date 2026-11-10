@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /hold.html
+
+Sitemap: https://rbdf.org/sitemap.xml
