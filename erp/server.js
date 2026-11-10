@@ -365,7 +365,7 @@ ${missing.length ? `<div class="msg err">Missing: ${missing.join(', ')}</div>` :
   if (p === '/admin/documents') {
     if (POST && act === 'verify') { run("UPDATE documents SET status='Verified' WHERE id=?", parseInt(post.id)); audit(u, 'Documents', 'Verified document ' + post.id, '', '', req); go('/admin/documents', 'Verified.'); return true; }
     const types = ['Photo', 'Signature', 'NID', 'Nominee NID', 'Agreement', 'Notary Copy', 'Share Certificate', 'Registration File', 'Other Documents'];
-    out('/admin/documents', 'Documents', 'One vault for every member and forum document, with filters and missing-file alerts.', `<div class="card" style="margin-bottom:14px"><b>Document types</b><p class="mut">${types.join(' · ')}. Every file keeps its member, type, upload date and who uploaded it. Each view of a file is written to the Audit Log.</p></div>${docPanel('', false)}`); return true;
+    out('/admin/documents', 'Documents', 'One vault for every member and forum document, with filters and missing-file alerts.', `${isTop(u) ? `<div class="card" style="margin-bottom:14px"><b>Import supplied documents package</b><p class="mut">Choose the encrypted file rbf-docs.pack once. It files each member's photo, NID, nominee papers, agreement and profile details. Safe to repeat; members already imported are skipped.</p><input type="file" id="pk"> <button class="btn" onclick="var f=document.getElementById('pk').files[0];if(!f)return;this.disabled=true;this.textContent='Importing...';var b=this;fetch('/admin/documents/import',{method:'POST',body:f}).then(function(r){return r.text()}).then(function(t){alert(t);location.reload()}).catch(function(){alert('Failed');b.disabled=false})">Import</button></div>` : ''}<div class="card" style="margin-bottom:14px"><b>Document types</b><p class="mut">${types.join(' · ')}. Every file keeps its member, type, upload date and who uploaded it. Each view of a file is written to the Audit Log.</p></div>${docPanel('', false)}`); return true;
   }
   if (p === '/admin/documents/upload' && POST) {
     const chunks = []; let n = 0; await new Promise(r => { req.on('data', ch => { n += ch.length; if (n <= 6291456) chunks.push(ch); }); req.on('end', r); });
@@ -374,6 +374,16 @@ ${missing.length ? `<div class="msg err">Missing: ${missing.join(', ')}</div>` :
     if (!q1('SELECT 1 x FROM members WHERE id=?', mid)) { res.writeHead(400); res.end('bad'); return true; }
     const fn = crypto.randomBytes(12).toString('hex'); fs.writeFileSync(FILES + '/' + fn, Buffer.concat(chunks));
     run('INSERT INTO documents(member_id,dtype,name,file,uploaded,by,size) VALUES(?,?,?,?,?,?,?)', mid, t, nm, fn, today(), u.id, n); audit(u, 'Documents', 'Uploaded ' + t + ' for ' + mid, '', nm, req); res.writeHead(200); res.end('ok'); return true;
+  }
+  if (p === '/admin/documents/import' && POST) {
+    if (!isTop(u)) { send(res, 403, 'Not allowed'); return true; }
+    const chunks = []; let n = 0; for await (const ch of req) { n += ch.length; if (n > 80e6) { send(res, 413, 'Too large'); return true; } chunks.push(ch); }
+    const buf = Buffer.concat(chunks); let o = 0, ok = 0, skip = 0, bad = []; 
+    while (o + 11 <= buf.length) { const id = buf.subarray(o, o + 7).toString(), len = buf.readUInt32BE(o + 7); const blob = buf.subarray(o + 11, o + 11 + len); o += 11 + len;
+      if (!/^RBF-\d{3}$/.test(id) || !q1('SELECT 1 x FROM members WHERE id=?', id)) { bad.push(id); continue; }
+      if (kvget('docs_v1_' + id, false)) { skip++; continue; }
+      try { importBundle(id, blob); ok++; audit(u, 'Documents', 'Imported supplied documents and profile data for ' + id, '', '', req); } catch (err) { bad.push(id + ':' + err.message); } }
+    res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ imported: ok, skipped: skip, failed: bad })); return true;
   }
   let m4 = /^\/admin\/documents\/file\/(\d+)$/.exec(p);
   if (m4) { const d = q1('SELECT * FROM documents WHERE id=?', m4[1]); if (!d || (/NID/.test(d.dtype) && !(isTop(u) || u.role === 'Secretary'))) { send(res, 403, 'Not allowed'); return true; } audit(u, 'Documents', 'Viewed ' + d.dtype + ' of ' + d.member_id, '', d.name, req); const ext = d.name.toLowerCase().split('.').pop(); const ct = { pdf: 'application/pdf', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' }[ext] || 'application/octet-stream'; res.writeHead(200, { 'Content-Type': ct, 'Content-Disposition': 'inline', 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-store', 'Content-Security-Policy': "default-src 'none'; img-src 'self' data:" }); res.end(fs.readFileSync(FILES + '/' + d.file)); return true; }
@@ -642,7 +652,7 @@ async function memberApp(req, res, url) {
   if (p === '/manifest.webmanifest') { res.writeHead(200, { 'Content-Type': 'application/manifest+json' }); return res.end(JSON.stringify({ name: 'RBDF Member', short_name: 'RBDF', start_url: '/', display: 'standalone', background_color: '#ffffff', theme_color: '#12815A', icons: [{ src: 'https://rbdf.org/favicon.png', sizes: '192x192', type: 'image/png' }] })); }
   if (p === '/sw.js') { res.writeHead(200, { 'Content-Type': 'application/javascript' }); return res.end("self.addEventListener('fetch',()=>{});"); }
   if (!u) return redirect(res, '/login');
-  const post = req.method === 'POST' ? await body(req).catch(() => ({})) : {};
+  const post = req.method === 'POST' && !/^\/admin\/documents\/(upload|import)$/.test(p) ? await body(req).catch(() => ({})) : {};
   const back = (to, m) => redirect(res, to + '?m=' + flash(m));
 
   // ---- member pages
@@ -698,30 +708,22 @@ genMonthly(ym(today())); setInterval(() => genMonthly(ym(today())), 6 * 3600e3);
 
 // ---- one-time import of supplied member documents (encrypted bundles fetched from the repo; key = ERP_SEED)
 function untar(buf) { const out = []; let o = 0; while (o + 512 <= buf.length) { const h = buf.subarray(o, o + 512); if (h[0] === 0) break; const name = h.subarray(0, 100).toString().replace(/\0.*$/, ''); const size = parseInt(h.subarray(124, 136).toString().replace(/\0.*$/, '').trim() || '0', 8); out.push({ name, data: buf.subarray(o + 512, o + 512 + size) }); o += 512 + Math.ceil(size / 512) * 512; } return out; }
-async function importDocs() {
-  if (!process.env.ERP_SEED) return;
+function importBundle(id, b) {
   const key = crypto.createHash('sha256').update('rbf-docs:' + process.env.ERP_SEED).digest();
-  const ids = q("SELECT id FROM members WHERE id!='admin' ORDER BY seq").map(r => r.id); let left = 0;
   fs.mkdirSync(FILES + '/photos', { recursive: true });
-  for (const id of ids) {
-    if (kvget('docs_v1_' + id, false)) continue;
-    try {
-      const r = await fetch('https://raw.githubusercontent.com/modinalink-commits/rbdf-forum/main/erp/docs/' + id + '.bin?t=' + Date.now());
-      if (!r.ok) { left++; continue; }
-      const b = Buffer.from(await r.arrayBuffer()); const d = crypto.createDecipheriv('aes-256-gcm', key, b.subarray(0, 12)); d.setAuthTag(b.subarray(12, 28));
-      const files = untar(Buffer.concat([d.update(b.subarray(28)), d.final()])); const man = JSON.parse(files.find(f => f.name === 'manifest.json').data.toString());
-      const byName = Object.fromEntries(files.map(f => [f.name, f.data]));
-      if (byName['photo.jpg']) fs.writeFileSync(FILES + '/photos/' + id + '.jpg', byName['photo.jpg']);
-      db.exec('BEGIN');
-      for (const dd of man.docs) { const data = byName[dd.f]; if (!data) continue; const fn = crypto.randomBytes(12).toString('hex'); fs.writeFileSync(FILES + '/' + fn, data); run('INSERT INTO documents(member_id,dtype,name,file,uploaded,by,size) VALUES(?,?,?,?,?,?,?)', id, dd.t, dd.n, fn, today(), 'import', data.length); }
-      const m = q1('SELECT * FROM members WHERE id=?', id), pr = prof(m); Object.entries(man.profile || {}).forEach(([k, v]) => { if (!pr[k]) pr[k] = v; });
-      run('UPDATE members SET profile=? WHERE id=?', JSON.stringify(pr), id); if (man.nominee_name && !m.nominee) run('UPDATE members SET nominee=? WHERE id=?', man.nominee_name, id);
-      audit(null, 'Documents', 'Imported ' + man.docs.length + ' supplied documents and profile data for ' + id, '', '', null); kvset('docs_v1_' + id, true); db.exec('COMMIT');
-    } catch (err) { try { db.exec('ROLLBACK'); } catch {} console.error('docs import', id, err.message); left++; }
-  }
-  if (left) setTimeout(importDocs, 5 * 60e3);
+  const d = crypto.createDecipheriv('aes-256-gcm', key, b.subarray(0, 12)); d.setAuthTag(b.subarray(12, 28));
+  const files = untar(Buffer.concat([d.update(b.subarray(28)), d.final()])); const man = JSON.parse(files.find(f => f.name === 'manifest.json').data.toString());
+  const byName = Object.fromEntries(files.map(f => [f.name, f.data]));
+  if (byName['photo.jpg']) fs.writeFileSync(FILES + '/photos/' + id + '.jpg', byName['photo.jpg']);
+  db.exec('BEGIN');
+  try {
+    for (const dd of man.docs) { const data = byName[dd.f]; if (!data) continue; const fn = crypto.randomBytes(12).toString('hex'); fs.writeFileSync(FILES + '/' + fn, data); run('INSERT INTO documents(member_id,dtype,name,file,uploaded,by,size) VALUES(?,?,?,?,?,?,?)', id, dd.t, dd.n, fn, today(), 'import', data.length); }
+    const m = q1('SELECT * FROM members WHERE id=?', id), pr = prof(m); Object.entries(man.profile || {}).forEach(([k, v]) => { if (!pr[k]) pr[k] = v; });
+    run('UPDATE members SET profile=? WHERE id=?', JSON.stringify(pr), id); if (man.nominee_name && !m.nominee) run('UPDATE members SET nominee=? WHERE id=?', man.nominee_name, id);
+    kvset('docs_v1_' + id, true); db.exec('COMMIT');
+  } catch (err) { db.exec('ROLLBACK'); throw err; }
+  return man.docs.length;
 }
-setTimeout(importDocs, 3000);
 function verifyMember(id) { const m = q1("SELECT name_en,id,role,status FROM members WHERE id=? AND id!='admin'", id); return authBox('Member Verification', 'Membership check', m ? `<div style="border:1px solid #BFE3D1;background:#F3FBF7;border-radius:16px;padding:18px 20px"><span class="tag" style="background:#12815A;color:#fff">${m.status === 'active' ? 'ACTIVE MEMBER' : e(m.status).toUpperCase()}</span><table style="margin-top:10px"><tr><th>Name</th><td>${e(m.name_en)}</td></tr><tr><th>Member ID</th><td>${e(m.id)}</td></tr><tr><th>Role</th><td>${e(m.role)}</td></tr></table></div>` : '<div class="msg err">INVALID — no such member.</div>'); }
 http.createServer(async (req, res) => {
   try {
