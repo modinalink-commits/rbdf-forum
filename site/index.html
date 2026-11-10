@@ -28,9 +28,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <a href="#about" style="display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;font-size:14.5px;font-weight:500;color:#414859;text-decoration:none">About</a>
 
 
-<a href="#messages" style="display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;font-size:14.5px;font-weight:500;color:#414859;text-decoration:none">Messages</a>
-
-
 <a href="#committee" style="display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;font-size:14.5px;font-weight:500;color:#414859;text-decoration:none">Committee</a>
 
 
@@ -88,10 +85,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <g fill="#E3F5EC" stroke="#1CA270" stroke-width="3"><circle cx="420" cy="170" r="12"/><circle cx="455" cy="215" r="12"/><circle cx="430" cy="270" r="12"/></g>
 <line x1="60" y1="360" x2="470" y2="360" stroke="#414859" stroke-width="3"/>
 </svg>
-<div style="position:absolute;left:22px;top:18px;background:#fff;border:1px solid #E3E6EC;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:600;color:#414859">Slide 1 of 2 · photo slider</div>
-<button type="button" aria-label="Previous slide" style="position:absolute;left:14px;top:50%;width:44px;height:44px;margin-top:-22px;border-radius:50%;border:1px solid #CBD0DA;background:#fff;font-size:18px;cursor:pointer">‹</button>
-<button type="button" aria-label="Next slide" style="position:absolute;right:14px;top:50%;width:44px;height:44px;margin-top:-22px;border-radius:50%;border:1px solid #CBD0DA;background:#fff;font-size:18px;cursor:pointer">›</button>
-<div style="position:absolute;left:0;right:0;bottom:18px;display:flex;gap:8px;justify-content:center"><span style="width:26px;height:10px;border-radius:999px;background:#12815A"></span><span style="width:10px;height:10px;border-radius:50%;background:#CBD0DA"></span></div>
+<div style="position:absolute;left:22px;bottom:22px;right:22px;display:flex;gap:10px;flex-wrap:wrap">
+<span style="background:#fff;border:1px solid #E3E6EC;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600">Transparent</span>
+<span style="background:#fff;border:1px solid #E3E6EC;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600">Cooperative</span>
+<span style="background:#fff;border:1px solid #E3E6EC;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600">Growing</span>
+</div>
 </div>
 </div>
 </div>
@@ -103,13 +101,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 
 <div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:24px;box-shadow:0 8px 24px rgba(38,43,56,.06)">
 <div style="font-size:32px;font-weight:700;color:#12815A;letter-spacing:-.01em">20</div>
-<div style="font-size:14.5px;color:#5A6172;margin-top:4px">Total Members</div>
+<div style="font-size:14.5px;color:#5A6172;margin-top:4px">Members</div>
 </div>
 
 
 <div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:24px;box-shadow:0 8px 24px rgba(38,43,56,.06)">
 <div style="font-size:32px;font-weight:700;color:#12815A;letter-spacing:-.01em">20</div>
-<div style="font-size:14.5px;color:#5A6172;margin-top:4px">Total Shares</div>
+<div style="font-size:14.5px;color:#5A6172;margin-top:4px">Shares</div>
 </div>
 
 
@@ -131,45 +129,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <section id="about" style="padding:88px 0">
 <div style="max-width:1280px;margin:0 auto;padding:0 32px;display:flex;flex-wrap:wrap;gap:56px;align-items:center">
 <div style="flex:1 1 440px;min-width:0">
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-<div style="aspect-ratio:3/4;border-radius:22px;background:linear-gradient(135deg,#E3F5EC,#D3EBE0);border:1px solid #CFE6DB;display:flex;align-items:flex-end;padding:16px;font-size:13.5px;font-weight:600;color:#0D6446">About photo 1</div>
-<div style="aspect-ratio:3/4;border-radius:22px;background:linear-gradient(135deg,#D3EBE0,#E3F5EC);border:1px solid #CFE6DB;display:flex;align-items:flex-end;padding:16px;font-size:13.5px;font-weight:600;color:#0D6446;margin-top:28px">About photo 2</div>
+<div style="aspect-ratio:4/3;border-radius:24px;background:linear-gradient(135deg,#E3F5EC,#D3EBE0);border:1px solid #CFE6DB;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#0D6446">
+<img src="/_blob/e3dee8e819cf790e7ae4a46f638005f8" alt="" style="width:150px;height:auto;opacity:.95">
+<span style="font-size:13.5px;font-weight:600">Forum group / office photo goes here</span>
 </div>
 </div>
 <div style="flex:1 1 440px;min-width:0">
 <div class="bn" style="font-size:15px;font-weight:600;color:#12815A">আমাদের সম্পর্কে</div>
 <h2 style="margin:6px 0 16px;font-size:34px;line-height:1.2;font-weight:700">About Riazuddin Bazar Business Development Forum</h2>
-<p style="margin:0 0 14px;font-size:16.5px;line-height:1.7;color:#414859">The Riazuddin Bazar Business Development Forum is a united and organised platform for the traders of Riazuddin Bazar, Kotwali, Chattogram. Its main aim is to increase mutual cooperation among traders, protect their rights, and ensure the overall development of the market.</p>
-<p style="margin:0 0 14px;font-size:16.5px;line-height:1.7;color:#414859">We believe a strong business environment can be built only on unity, transparency and ethics. The Forum works to maintain good relations among traders, to promote fair business practices, and to establish discipline in market management. All financial transactions are carried out with transparency and accountability, and modern technology is used for online accounting and record-keeping.</p>
-<p style="margin:0 0 24px;font-size:16.5px;line-height:1.7;color:#414859;font-weight:600">Unity is strength, and progress comes through development.</p>
+<p style="margin:0 0 14px;font-size:16.5px;line-height:1.7;color:#414859">Riazuddin Bazar Business Development Forum is a business-focused association established to promote cooperation, transparency, business development and mutual support among members of Riazuddin Bazar.</p>
+<p style="margin:0 0 24px;font-size:16.5px;line-height:1.7;color:#414859">The forum works to create a stronger platform for entrepreneurs, traders and business professionals through organised activities, financial transparency, member support and development initiatives.</p>
 <a href="#mission" style="display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border-radius:12px;background:#12815A;color:#fff;font-weight:600;text-decoration:none">Read More</a>
-</div>
-</div>
-</section>
-
-<!-- 3b MESSAGES -->
-<section id="messages" style="padding:8px 0 88px">
-<div style="max-width:1280px;margin:0 auto;padding:0 32px">
-<div style="margin-bottom:30px"><div class="bn" style="font-size:15px;font-weight:600;color:#12815A">বাণী</div><h2 style="margin:6px 0 0;font-size:34px;font-weight:700">Messages from the Leadership</h2></div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:24px">
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:22px;padding:32px;box-shadow:0 8px 24px rgba(38,43,56,.05)">
-<div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
-<div style="flex:0 0 84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px">FA</div>
-<div><h3 style="margin:0;font-size:22px;font-weight:700">President’s Message</h3><div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Md. Faruk, President</div></div>
-</div>
-<p style="margin:0;font-size:15.5px;line-height:1.75;color:#414859">In the name of Allah, the Most Gracious, the Most Merciful. Assalamu Alaikum wa Rahmatullahi wa Barakatuhu. The main purpose of founding the Riazuddin Bazar Business Development Forum is to build a strong platform of mutual unity, cooperation and progress among the traders of our beloved market. In today’s competitive business environment, coordination, transparency and mutual trust among us are essential if we are to survive and grow. The Forum will work to protect the rights of traders, maintain discipline in the market, and ensure a fair business environment. We want Riazuddin Bazar to be more than a commercial centre. We want it to become an example of unity, honesty and mutual respect. I call upon all members to perform their responsibilities properly, to abide by the decisions of the organisation, and to contribute together to the development of the market. Insha’Allah, our collective effort will turn this Forum into a successful and exemplary organisation. May Allah guide us all on the path of justice, honesty and unity. Wassalamu Alaikum wa Rahmatullah.</p>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:22px;padding:32px;box-shadow:0 8px 24px rgba(38,43,56,.05)">
-<div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
-<div style="flex:0 0 84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px">MU</div>
-<div><h3 style="margin:0;font-size:22px;font-weight:700">Secretary’s Message</h3><div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Md. Minhaj Uddin, Secretary</div></div>
-</div>
-<p style="margin:0;font-size:15.5px;line-height:1.75;color:#414859">Assalamu Alaikum wa Rahmatullahi wa Barakatuhu. The Riazuddin Bazar Business Development Forum is a collective effort of all of us traders. The aim of this organisation is the overall development of the market, the protection of traders’ rights, and a transparent and orderly business environment. We believe that unity is strength. The active participation of all members, mutual cooperation, and a respectful attitude towards the rules and policies of the organisation are the key to our success. As Secretary, my responsibility will be to run the organisation’s activities smoothly, to listen to the views of members, and to play an effective role in carrying out all decisions. Insha’Allah, we are committed to building a transparent, accountable and modern system of management. I seek the sincere cooperation of all members. Through our joint efforts, Insha’Allah, we will be able to turn Riazuddin Bazar into an exemplary and strong business community. Wassalamu Alaikum wa Rahmatullah.</p>
-</div>
-
 </div>
 </div>
 </section>
@@ -248,8 +218,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <section id="committee" style="padding:88px 0">
 <div style="max-width:1280px;margin:0 auto;padding:0 32px">
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:36px">
-<div><div class="bn" style="font-size:15px;font-weight:600;color:#12815A">কার্যনির্বাহী কমিটি</div><h2 style="margin:6px 0 0;font-size:34px;font-weight:700">EC Members</h2></div>
-<a href="#committee" style="display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #CBD0DA;background:#fff;color:#262B38;font-weight:600;text-decoration:none">See All EC Members</a>
+<div><div class="bn" style="font-size:15px;font-weight:600;color:#12815A">কার্যনির্বাহী কমিটি</div><h2 style="margin:6px 0 0;font-size:34px;font-weight:700">Executive Committee</h2></div>
+<a href="#committee" style="display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #CBD0DA;background:#fff;color:#262B38;font-weight:600;text-decoration:none">View Full Committee</a>
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px">
 
@@ -257,7 +227,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">F</div>
 <div style="font-weight:700;font-size:17px">Mohammed Faruk</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">President</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0001</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-101</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
@@ -266,7 +236,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">MU</div>
 <div style="font-weight:700;font-size:17px">Mohammed Minhaz Uddin</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Secretary</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0002</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-102</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
@@ -275,7 +245,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">JH</div>
 <div style="font-weight:700;font-size:17px">Jobair Hossen</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Assistant Secretary</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0003</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-103</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
@@ -284,7 +254,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">RH</div>
 <div style="font-weight:700;font-size:17px">Rabiul Hosen</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Treasurer</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0004</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-104</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
@@ -293,7 +263,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">SU</div>
 <div style="font-weight:700;font-size:17px">Saif Uddin Majumdar</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Executive Member</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0005</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-105</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
@@ -302,16 +272,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">HR</div>
 <div style="font-weight:700;font-size:17px">Mohammad Harunur Rashid</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Executive Member</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0006</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-106</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
 
 <div style="background:#fff;border:1px solid #E3E6EC;border-radius:20px;padding:24px;text-align:center;box-shadow:0 6px 18px rgba(38,43,56,.04)">
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">JA</div>
-<div style="font-weight:700;font-size:17px">Md. Joynal Abedin Sohel</div>
+<div style="font-weight:700;font-size:17px">Md Joynal Abedin Sohel</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Executive Member</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0007</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-107</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
@@ -320,12 +290,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">FA</div>
 <div style="font-weight:700;font-size:17px">Md Faisal Alam</div>
 <div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Executive Member</div>
-<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-0008</div>
+<div style="font-size:13px;color:#5A6172;margin-top:6px">Member ID RBF-108</div>
 <a href="#committee" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:16px;border-radius:12px;border:1px solid #CBD0DA;color:#262B38;font-weight:600;font-size:14.5px;text-decoration:none">View Profile</a>
 </div>
 
 </div>
-<div style="margin-top:18px;font-size:14px;color:#5A6172">Photos are uploaded from Website Content; until a photo is added, the member’s initials are shown.</div>
+<div style="margin-top:18px;font-size:14px;color:#5A6172">Executive Members follow in the same card style. Names and photos are shown as placeholders in this preview.</div>
 </div>
 </section>
 
@@ -336,14 +306,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px">
 
 <div style="display:flex;gap:16px;align-items:center;border-left:4px solid #414859;background:#F5F6F8;border-radius:14px;padding:18px 20px">
-<div style="flex:0 0 64px;height:64px;border-radius:14px;background:#414859;color:#6FE0B2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">MR</div>
-<div><div style="font-weight:700;font-size:16.5px">Mohammad Rashed</div><div style="font-size:14px;color:#5A6172;margin-top:2px">Advisor</div></div>
+<div style="flex:0 0 64px;height:64px;border-radius:14px;background:#414859;color:#6FE0B2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">NA</div>
+<div><div style="font-weight:700;font-size:16.5px">Md Nurul Alam</div><div style="font-size:14px;color:#5A6172;margin-top:2px">Advisor · RBF-109</div></div>
 </div>
 
 
 <div style="display:flex;gap:16px;align-items:center;border-left:4px solid #414859;background:#F5F6F8;border-radius:14px;padding:18px 20px">
-<div style="flex:0 0 64px;height:64px;border-radius:14px;background:#414859;color:#6FE0B2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">NA</div>
-<div><div style="font-weight:700;font-size:16.5px">Md Nurul Alam</div><div style="font-size:14px;color:#5A6172;margin-top:2px">Advisor</div></div>
+<div style="flex:0 0 64px;height:64px;border-radius:14px;background:#414859;color:#6FE0B2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">R</div>
+<div><div style="font-weight:700;font-size:16.5px">Md Rubel</div><div style="font-size:14px;color:#5A6172;margin-top:2px">Advisor · RBF-110</div></div>
+</div>
+
+
+<div style="display:flex;gap:16px;align-items:center;border-left:4px solid #414859;background:#F5F6F8;border-radius:14px;padding:18px 20px">
+<div style="flex:0 0 64px;height:64px;border-radius:14px;background:#414859;color:#6FE0B2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px">R</div>
+<div><div style="font-weight:700;font-size:16.5px">Mohammad Rashed</div><div style="font-size:14px;color:#5A6172;margin-top:2px">Advisor · RBF-111</div></div>
 </div>
 
 </div>
@@ -364,106 +340,60 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 
 <div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
 <div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">SH</div>
-<div><div style="font-weight:700;font-size:15.5px">Md Shahadat Hosson</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0009</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
-<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">KU</div>
-<div><div style="font-weight:700;font-size:15.5px">Md. Kopil Uddin Chowdhury</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0010</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
-<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">NU</div>
-<div><div style="font-weight:700;font-size:15.5px">Md Nasir Ullah</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0011</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
-<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">M</div>
-<div><div style="font-weight:700;font-size:15.5px">Md Musa</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0012</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
-<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">MA</div>
-<div><div style="font-weight:700;font-size:15.5px">Monjur Alam</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0013</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
-<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">RU</div>
-<div><div style="font-weight:700;font-size:15.5px">Md Ramiz Uddin</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0014</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
-<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">KN</div>
-<div><div style="font-weight:700;font-size:15.5px">Kazi Nazrul Islam</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0015</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
+<div><div style="font-weight:700;font-size:15.5px">Md Sajjad Hossain Robiul</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-112</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
 </div>
 
 
 <div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
 <div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">JH</div>
-<div><div style="font-weight:700;font-size:15.5px">Jahangir Hosen</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0016</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
+<div><div style="font-weight:700;font-size:15.5px">Jahangir Hosen</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-113</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
+</div>
+
+
+<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
+<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">KN</div>
+<div><div style="font-weight:700;font-size:15.5px">Kazi Nazrul Islam</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-114</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
+</div>
+
+
+<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
+<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">RU</div>
+<div><div style="font-weight:700;font-size:15.5px">Md Ramiz Uddin</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-115</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
+</div>
+
+
+<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
+<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">MA</div>
+<div><div style="font-weight:700;font-size:15.5px">Monjur Alam</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-116</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
+</div>
+
+
+<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
+<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">M</div>
+<div><div style="font-weight:700;font-size:15.5px">Md Musa</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-117</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
+</div>
+
+
+<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
+<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">NU</div>
+<div><div style="font-weight:700;font-size:15.5px">Md Nasir Ullah</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-118</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
+</div>
+
+
+<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
+<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">KU</div>
+<div><div style="font-weight:700;font-size:15.5px">Md Kopil Uddin Chowdhury</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-119</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
 </div>
 
 
 <div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
 <div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">SH</div>
-<div><div style="font-weight:700;font-size:15.5px">Md Sajjad Hossain Robiul</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0017</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
-</div>
-
-
-<div style="background:#fff;border:1px solid #E3E6EC;border-radius:18px;padding:18px;display:flex;gap:14px;align-items:center">
-<div style="flex:0 0 60px;height:60px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px">R</div>
-<div><div style="font-weight:700;font-size:15.5px">Md Rubel</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-0018</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">Member</div></div>
+<div><div style="font-weight:700;font-size:15.5px">Md Shahadat Hosson</div><div style="font-size:13px;color:#5A6172;margin-top:2px">RBF-120</div><div style="font-size:13px;color:#12815A;font-weight:600;margin-top:2px">General Member</div></div>
 </div>
 
 </div>
 <div style="margin-top:20px;display:flex;gap:10px;align-items:flex-start;background:#FFF6EE;border:1px solid #F1D5BC;border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.55;color:#7A3A12;max-width:760px">
 <span style="font-weight:700">Privacy:</span><span>Only photo, name, Member ID and designation are public. NID, private address, financial history, passwords and nominee data are never shown on this website.</span>
-</div>
-</div>
-</section>
-
-<!-- 8b FOUNDING MEMBERS -->
-<section id="founding" style="padding:88px 0;background:#fff;border-top:1px solid #E3E6EC;border-bottom:1px solid #E3E6EC">
-<div style="max-width:1280px;margin:0 auto;padding:0 32px">
-<div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:34px">
-<div><div class="bn" style="font-size:15px;font-weight:600;color:#12815A">প্রতিষ্ঠাতা সদস্যবৃন্দ</div><h2 style="margin:6px 0 0;font-size:34px;font-weight:700">Founding Members</h2></div>
-<a href="#founding" style="display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #CBD0DA;background:#fff;color:#262B38;font-weight:600;text-decoration:none">See All Founding Members</a>
-</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px">
-
-<div style="background:#F5F6F8;border:1px solid #E3E6EC;border-radius:20px;padding:24px;text-align:center">
-<div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">MF</div>
-<div style="font-weight:700;font-size:17px">Mohammed Faruk</div>
-<div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">President</div>
-</div>
-
-
-<div style="background:#F5F6F8;border:1px solid #E3E6EC;border-radius:20px;padding:24px;text-align:center">
-<div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">MR</div>
-<div style="font-weight:700;font-size:17px">Mohammad Rashed</div>
-<div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Advisor</div>
-</div>
-
-
-<div style="background:#F5F6F8;border:1px solid #E3E6EC;border-radius:20px;padding:24px;text-align:center">
-<div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">HR</div>
-<div style="font-weight:700;font-size:17px">Mohammad Harunur Rashid</div>
-<div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Executive Member</div>
-</div>
-
-
-<div style="background:#F5F6F8;border:1px solid #E3E6EC;border-radius:20px;padding:24px;text-align:center">
-<div style="width:112px;height:112px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E3F5EC,#CFE9DD);color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:34px">MU</div>
-<div style="font-weight:700;font-size:17px">Mohammed Minhaz Uddin</div>
-<div style="font-size:14.5px;color:#12815A;font-weight:600;margin-top:2px">Secretary</div>
-</div>
-
 </div>
 </div>
 </section>
@@ -661,7 +591,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <section id="gallery" style="padding:88px 0;background:#fff;border-top:1px solid #E3E6EC;border-bottom:1px solid #E3E6EC">
 <div style="max-width:1280px;margin:0 auto;padding:0 32px">
 <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:34px">
-<div><div class="bn" style="font-size:15px;font-weight:600;color:#12815A">গ্যালারি</div><h2 style="margin:6px 0 0;font-size:34px;font-weight:700">Gallery</h2></div>
+<div><div class="bn" style="font-size:15px;font-weight:600;color:#12815A">আমাদের কার্যক্রম</div><h2 style="margin:6px 0 0;font-size:34px;font-weight:700">Our Activities</h2></div>
 <a href="#gallery" style="display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid #CBD0DA;background:#fff;color:#262B38;font-weight:600;text-decoration:none">View Gallery</a>
 </div>
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
