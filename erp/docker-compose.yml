@@ -20,10 +20,10 @@ services:
         remote() { wget -qO- "$$B/VERSION?ts=$$(date +%s)" | tr -dc 'a-z0-9.-'; }
         fetch() {
           V=$$(remote); [ -n "$$V" ] || return 1
-          wget -qO /app/s.new "$$B/server.js?ts=$$(date +%s)" || return 1
-          [ $$(wc -c < /app/s.new) -gt 5000 ] || return 1
-          node --check /app/s.new || return 1
-          mv /app/s.new /app/server.js && echo $$V > /app/ver && echo "ERP code $$V"
+          wget -qO /app/s.new.js "$$B/server.js?ts=$$(date +%s)" || return 1
+          [ $$(wc -c < /app/s.new.js) -gt 5000 ] || return 1
+          node --check /app/s.new.js || return 1
+          mv /app/s.new.js /app/server.js && echo $$V > /app/ver && echo "ERP code $$V"
         }
         fetch || [ -f /app/server.js ] || exit 1
         while true; do
