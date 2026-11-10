@@ -125,12 +125,59 @@ addEventListener('load',function(){if(ios&&want)bar('<b>Install on iPhone / iPad
 const authBox = (title, sub, inner) => page(title, `<div style="min-height:100vh;background:linear-gradient(180deg,#fff,#EEF8F3);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px"><div style="width:100%;max-width:440px;background:#fff;border:1px solid #E3E6EC;border-radius:24px;padding:36px;box-shadow:0 18px 50px rgba(38,43,56,.1)"><img src="https://rbdf.org/logo.png" alt="Riazuddin Bazar Business Development Forum" style="display:block;width:190px;height:auto;margin:0 auto 20px"><h1 style="margin:0 0 6px;text-align:center;font-size:27px">${e(title)}</h1><p style="margin:0 0 22px;text-align:center;color:#5A6172;font-size:15px">${sub}</p>${inner}</div><div style="margin-top:22px;font-size:14px;color:#5A6172;text-align:center">Riazuddin Bazar Business Development Forum</div><a href="https://rbdf.org" style="display:flex;align-items:center;min-height:44px;font-size:14px;font-weight:600;text-decoration:none">← Back to website</a></div>`);
 const loginPage = (err, user) => authBox('Member Login', 'Sign in with your registered mobile number or Member ID.', `${err ? `<div class="msg err">${e(err)}</div>` : ''}<form method="post" action="/login" style="display:grid;gap:16px"><label>Mobile number or Member ID<input name="username" value="${e(user)}" placeholder="01XXXXXXXXX or RBF-101" autocomplete="username" required></label><label>Password<input name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required></label><button class="btn" style="min-height:52px;font-size:16px">Login</button></form><p class="mut" style="text-align:center;margin:16px 0 0">Your first password is your registered mobile number. Please change it after signing in.</p>`);
 
+const IC = { home: 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z', id: 'M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zM9 8a2 2 0 110 4 2 2 0 010-4zm4 8H5v-.6c0-1.3 2.7-2 4-2s4 .7 4 2V16zm6-1h-4v-2h4v2zm0-4h-4V9h4v2z', pay: 'M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z', rec: 'M18 2H6a2 2 0 00-2 2v18l3-2 2 2 3-2 3 2 2-2 3 2V4a2 2 0 00-2-2zm-2 12H8v-2h8v2zm0-4H8V8h8v2z', more: 'M6 10a2 2 0 100 4 2 2 0 000-4zm12 0a2 2 0 100 4 2 2 0 000-4zm-6 0a2 2 0 100 4 2 2 0 000-4z', list: 'M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z', bell: 'M12 22a2 2 0 002-2h-4a2 2 0 002 2zm6-6v-5c0-3.1-1.6-5.6-4.5-6.3V4a1.5 1.5 0 00-3 0v.7C7.7 5.4 6 7.9 6 11v5l-2 2v1h16v-1l-2-2z', lock: 'M18 8h-1V6a5 5 0 00-10 0v2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V10a2 2 0 00-2-2zM9 6a3 3 0 016 0v2H9V6z', out: 'M17 7l-1.4 1.4L18.2 11H8v2h10.2l-2.6 2.6L17 17l5-5-5-5zM4 5h8V3H4a2 2 0 00-2 2v14a2 2 0 002 2h8v-2H4V5z', shield: 'M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z' };
+const ico = (k, c) => `<svg width="24" height="24" viewBox="0 0 24 24" fill="${c || 'currentColor'}" aria-hidden="true"><path d="${IC[k]}"/></svg>`;
+const APPCSS = `<style>
+.appbar,.bnav,.sheet,.sheetbg{display:none}
+@media(max-width:760px){
+body{background:#F2F5F4}
+.top{display:none!important}
+.appbar{display:block;position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#19A56A,#0F7A52);color:#fff;padding:12px 16px 20px;border-radius:0 0 28px 28px;box-shadow:0 8px 22px rgba(15,122,82,.28)}
+.appbar .r1{display:flex;align-items:center;justify-content:space-between}
+.appbar .lg{background:#fff;border-radius:12px;padding:5px 10px;display:flex;align-items:center}.appbar .lg img{height:26px;display:block}
+.appbar .ti{margin-top:12px;font-size:22px;font-weight:700;line-height:1.2}.appbar .su{font-size:13px;opacity:.85;margin-top:2px}
+main.wrap{padding:16px 14px 110px!important}
+main>h1:first-child{display:none}
+.card{border-radius:20px!important;border:0!important;box-shadow:0 2px 10px rgba(38,43,56,.07)!important}
+.bnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -6px 24px rgba(38,43,56,.12);padding:8px 6px calc(8px + env(safe-area-inset-bottom));justify-content:space-around}
+.bnav a,.bnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font:600 11.5px Inter,system-ui,sans-serif;color:#5A6172;text-decoration:none;background:none;border:0;padding:0;cursor:pointer}
+.bnav .pill{width:60px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.bnav .on{color:#0D6446}.bnav .on .pill{background:#D9F2E6}
+.sheetbg{position:fixed;inset:0;background:rgba(20,28,40,.45);z-index:50}.sheetbg.on{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-radius:26px 26px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .25s ease;display:block}.sheet.on{transform:none}
+.sheet .gr{width:40px;height:4px;border-radius:2px;background:#D5D9E2;margin:0 auto 10px}
+.sheet a,.sheet button{display:flex;align-items:center;gap:14px;width:100%;min-height:54px;padding:0 8px;font:600 16px Inter,system-ui,sans-serif;color:#262B38;text-decoration:none;background:none;border:0;border-radius:14px;cursor:pointer;text-align:left}
+.sheet a:active,.sheet button:active{background:#F2F5F4}.sheet .ic{width:40px;height:40px;border-radius:12px;background:#E8F6EF;color:#0D6446;display:flex;align-items:center;justify-content:center}
+}
+.hero{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#19A56A,#0F7A52);color:#fff;border-radius:22px;padding:18px;box-shadow:0 10px 24px rgba(15,122,82,.25)}
+.hero .hn{font-size:19px;font-weight:700;line-height:1.2}.hero .hb{font-size:14px;opacity:.9;margin-top:2px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.chips span{background:rgba(255,255,255,.2);border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:600}
+.duecard{margin-top:14px;background:#fff;border-radius:22px;padding:18px;box-shadow:0 2px 10px rgba(38,43,56,.07)}
+.duecard .amt{font-size:32px;font-weight:800;color:#262B38;margin:2px 0}.duecard .amt.ok{color:#0D6446}
+.duecard .btn{margin-top:12px;width:100%;justify-content:center;min-height:50px;font-size:16px;border-radius:14px}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.kp>div{background:#fff;border-radius:18px;padding:14px 10px;text-align:center;box-shadow:0 2px 10px rgba(38,43,56,.07)}.kp b{display:block;font-size:18px;color:#262B38}.kp span{font-size:12px;color:#5A6172}
+.sec{margin:22px 4px 10px;font-size:17px;font-weight:700}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.qa a{display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;color:#262B38;font-size:12.5px;font-weight:600;text-align:center}.qa .ci{width:56px;height:56px;border-radius:18px;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center}
+.nt{background:#fff;border-radius:18px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(38,43,56,.07)}.nt b{display:block;margin:2px 0 4px}
+@media(min-width:761px){.hero,.duecard,.kp,.qa,.nt{max-width:720px}}
+</style>`;
 function shell(u, active, body, msg) {
   const adm = u.is_admin;
   const tabs = [['/', 'Home'], ['/id', 'My ID'], ['/pay', 'Pay'], ['/payments', 'Receipts'], ['/ledger', 'Statement'], ['/notices', 'Notices'], ['/password', 'Password']];
   const atabs = [['/admin', 'Dashboard'], ['/admin/members', 'Members'], ['/admin/payments', 'Payments'], ['/admin/notices', 'Notices']];
-  const set = (adm && (active.startsWith('/admin') || u.id === 'admin')) ? (u.id === 'admin' ? atabs.concat([['/password', 'Password']]) : atabs) : tabs;
-  return page('Portal', `<header class="top"><div class="wrap"><img src="https://rbdf.org/logo.png" alt="RBF" style="height:38px"><nav style="flex:1;display:flex;flex-wrap:wrap;gap:4px">${set.map(([h, l]) => `<a href="${h}" class="${active === h ? 'on' : ''}">${l}</a>`).join('')}${isStaff(u) && u.id !== 'admin' ? '<a href="/admin">Admin panel</a>' : ''}</nav><span class="mut">${e(u.name_en)} · ${e(u.id)}</span><form method="post" action="/logout"><button class="btn o s">Logout</button></form></div></header><main class="wrap" style="padding:26px 20px 60px">${msg ? `<div class="msg ${msg.startsWith('!') ? 'err' : ''}">${e(msg.replace(/^!/, ''))}</div>` : ''}${body}</main>`);
+  const isAdminView = adm && (active.startsWith('/admin') || u.id === 'admin');
+  const set = isAdminView ? (u.id === 'admin' ? atabs.concat([['/password', 'Password']]) : atabs) : tabs;
+  let app = '', css = '';
+  if (!isAdminView) {
+    const titles = { '/': 'Home', '/id': 'My ID', '/pay': 'Pay', '/payments': 'Receipts', '/ledger': 'Statement', '/notices': 'Notices', '/password': 'Password' };
+    const first = String(u.name_en || '').split(' ')[0];
+    const main = [['/', 'Home', 'home'], ['/id', 'My ID', 'id'], ['/pay', 'Pay', 'pay'], ['/payments', 'Receipts', 'rec']];
+    const inMore = ['/ledger', '/notices', '/password'].includes(active);
+    css = APPCSS;
+    app = `<div class="appbar"><div class="r1"><div class="lg"><img src="https://rbdf.org/logo.png" alt="RBDF"></div>${av(u.id, 38)}</div><div class="ti">${active === '/' ? 'Hello, ' + e(first) : e(titles[active] || 'Portal')}</div><div class="su">${active === '/' ? 'Welcome to your Forum portal' : e(u.name_en) + ' · ' + e(u.id)}</div></div>`;
+    app += `<nav class="bnav" aria-label="App">${main.map(([h, l, k]) => `<a href="${h}" class="${active === h ? 'on' : ''}"><span class="pill">${ico(k)}</span>${l}</a>`).join('')}<button type="button" id="mbtn" class="${inMore ? 'on' : ''}"><span class="pill">${ico('more')}</span>More</button></nav><div class="sheetbg" id="sbg"></div><div class="sheet" id="sht"><div class="gr"></div><a href="/ledger"><span class="ic">${ico('list')}</span>Statement</a><a href="/notices"><span class="ic">${ico('bell')}</span>Notices</a><a href="/password"><span class="ic">${ico('lock')}</span>Change password</a>${isStaff(u) && u.id !== 'admin' ? `<a href="/admin"><span class="ic">${ico('shield')}</span>Admin panel</a>` : ''}<form method="post" action="/logout" style="margin:0"><button><span class="ic" style="background:#FDE7E5;color:#9B2C22">${ico('out')}</span>Logout</button></form></div><script>(function(){var b=document.getElementById('mbtn'),s=document.getElementById('sht'),g=document.getElementById('sbg');function t(x){s.classList.toggle('on',x);g.classList.toggle('on',x)}b.onclick=function(){t(true)};g.onclick=function(){t(false)}})()</script>`;
+  }
+  return page('Portal', `${css}<header class="top"><div class="wrap"><img src="https://rbdf.org/logo.png" alt="RBF" style="height:38px"><nav style="flex:1;display:flex;flex-wrap:wrap;gap:4px">${set.map(([h, l]) => `<a href="${h}" class="${active === h ? 'on' : ''}">${l}</a>`).join('')}${isStaff(u) && u.id !== 'admin' ? '<a href="/admin">Admin panel</a>' : ''}</nav><span class="mut">${e(u.name_en)} · ${e(u.id)}</span><form method="post" action="/logout"><button class="btn o s">Logout</button></form></div></header>${app}<main class="wrap" style="padding:26px 20px 60px">${msg ? `<div class="msg ${msg.startsWith('!') ? 'err' : ''}">${e(msg.replace(/^!/, ''))}</div>` : ''}${body}</main>`);
 }
 
 // ---- request plumbing
@@ -723,8 +770,16 @@ async function memberApp(req, res, url) {
   if (p === '/' && u.id === 'admin') return redirect(res, '/admin');
   if (p === '/') {
     const mine = q('SELECT * FROM payments WHERE member_id=? AND status=? ORDER BY seq DESC', u.id, 'valid');
-    const paid = mine.reduce((s, x) => s + x.amount, 0);
-    return send(res, 200, shell(u, '/', `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card"><div class="mut">Member ID</div><div class="stat">${e(u.id)}</div><h2 style="margin:10px 0 2px">${e(u.name_en)}</h2><div class="bn">${e(u.name_bn)}</div><div class="tag" style="margin-top:8px">${e(u.role)}</div></div><div class="card"><div class="mut">Shares</div><div class="stat">${u.shares}</div><div class="mut" style="margin-top:12px">Total paid</div><div class="stat">${money(paid)}</div></div><div class="card"><div class="mut">Registered mobile</div><div style="font-weight:600;margin:4px 0 12px">${e(u.mobile)}</div><div class="mut">Member since</div><div style="font-weight:600">${e(u.joined)}</div></div></div><div style="margin-top:18px">${bankCard()}</div><h2 style="margin:28px 0 12px">Latest payments</h2>${payTable(mine.slice(0, 5))}`, msg));
+    const paid = mine.reduce((x, y) => x + y.amount, 0), ds = dueState(u.id), nx = ds.open[0];
+    const nts = q('SELECT * FROM notices ORDER BY id DESC LIMIT 2');
+    const qa = [['/id', 'id', 'My ID'], ['/pay', 'pay', 'Pay'], ['/payments', 'rec', 'Receipts'], ['/ledger', 'list', 'Statement'], ['/notices', 'bell', 'Notices'], ['/password', 'lock', 'Password']];
+    return send(res, 200, shell(u, '/', `<div class="hero">${av(u.id, 64)}<div><div class="hn">${e(u.name_en)}</div><div class="hb">${e(u.name_bn)}</div><div class="chips"><span>${e(u.id)}</span><span>${e(u.role)}</span></div></div></div>
+<div class="duecard"><div class="mut">Current due</div><div class="amt ${ds.total > 0 ? '' : 'ok'}">${money(ds.total)}</div><div class="mut">${nx ? e(nx.descr) + ' · due ' + e(fmtD(nx.due_date || nx.date)) : 'All clear. Thank you!'}</div>${ds.total > 0 ? '<a class="btn" href="/pay">Pay now</a>' : ''}</div>
+<div class="kp"><div><b>${u.shares}</b><span>Shares</span></div><div><b>${money(paid)}</b><span>Total paid</span></div><div><b>${e(fmtD(u.joined))}</b><span>Member since</span></div></div>
+<div class="sec">Quick actions</div><div class="qa">${qa.map(([h, k, l]) => `<a href="${h}"><span class="ci">${ico(k)}</span>${l}</a>`).join('')}</div>
+${nts.length ? `<div class="sec">Latest notices</div>${nts.map(n => `<a href="/notices" style="text-decoration:none;color:inherit"><div class="nt"><span class="mut">${e(n.created)}</span><b>${e(n.title)}</b><span class="mut">${e(String(n.body).slice(0, 90))}${String(n.body).length > 90 ? '…' : ''}</span></div></a>`).join('')}` : ''}
+<div class="sec">Deposit account</div>${bankCard()}
+<div class="sec">Latest payments</div>${payTable(mine.slice(0, 5))}`, msg));
   }
   if (p === '/payments') return send(res, 200, shell(u, '/payments', `<h1>My payments</h1>${payTable(q('SELECT * FROM payments WHERE member_id=? ORDER BY seq DESC', u.id))}`, msg));
   if (p === '/notices') return send(res, 200, shell(u, '/notices', `<h1>Notices</h1><div class="grid">${q('SELECT * FROM notices ORDER BY id DESC').map(n => `<div class="card"><div class="mut">${e(n.created)}</div><h3 style="margin:4px 0 8px">${e(n.title)}</h3><div style="white-space:pre-wrap;line-height:1.6">${e(n.body)}</div></div>`).join('') || '<div class="card mut">No notices yet.</div>'}</div>`, msg));
