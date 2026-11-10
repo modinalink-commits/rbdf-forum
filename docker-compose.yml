@@ -35,10 +35,10 @@ services:
         target: /etc/nginx/conf.d/default.conf
     labels:
       - traefik.enable=true
-      - traefik.http.routers.rbdf.rule=Host(`rbdf.org`) || Host(`www.rbdf.org`) || Host(`member.rbdf.org`) || Host(`app.rbdf.org`) || Host(`verify.rbdf.org`) || Host(`api.rbdf.org`)
-      - traefik.http.routers.rbdf.entrypoints=websecure
-      - traefik.http.routers.rbdf.tls.certresolver=letsencrypt
-      - traefik.http.services.rbdf.loadbalancer.server.port=80
+      - traefik.http.routers.rbdfsite.rule=Host(`rbdf.org`) || Host(`www.rbdf.org`) || Host(`member.rbdf.org`) || Host(`app.rbdf.org`) || Host(`verify.rbdf.org`) || Host(`api.rbdf.org`)
+      - traefik.http.routers.rbdfsite.entrypoints=websecure
+      - traefik.http.routers.rbdfsite.tls.certresolver=letsencrypt
+      - traefik.http.services.rbdfsite.loadbalancer.server.port=80
 configs:
   ngx:
     content: |
