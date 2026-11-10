@@ -110,7 +110,7 @@ input,select,textarea,button{font-family:inherit}input:focus-visible,select:focu
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 20px;border-radius:12px;border:0;background:#12815A;color:#fff;font-weight:600;font-size:15px;cursor:pointer;text-decoration:none}
 .btn.o{background:#fff;color:#262B38;border:1px solid #CBD0DA}.btn.d{background:#B3261E}.btn.s{min-height:36px;padding:0 12px;font-size:13.5px}
 label{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:600;color:#414859}
-input,select,textarea{border:1px solid #CBD0DA;border-radius:12px;padding:0 14px;font-size:16px;min-height:48px;background:#fff}textarea{padding:12px 14px;min-height:96px}
+input,select,textarea{border:1px solid #CBD0DA;border-radius:12px;padding:0 14px;font-size:16px;min-height:48px;background:#fff}input[type=file]{max-width:100%;width:100%;padding:10px 12px;min-height:48px}textarea{padding:12px 14px;min-height:96px}
 table{width:100%;border-collapse:collapse;font-size:14.5px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #E3E6EC;vertical-align:top}th{color:#5A6172;font-size:13px;font-weight:600}
 .tag{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 10px;background:#E3F5EC;color:#0D6446}.tag.x{background:#FDE7E5;color:#B3261E}
 header.top{background:#fff;border-bottom:1px solid #E3E6EC}header.top .wrap{display:flex;align-items:center;gap:14px;min-height:64px;flex-wrap:wrap}
