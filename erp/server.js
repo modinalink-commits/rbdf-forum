@@ -139,9 +139,48 @@ const redirect = (res, to, extra = {}) => { res.writeHead(303, { Location: to, .
 const cookie = v => `s=${v}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${v ? 604800 : 0}`;
 const flash = m => encodeURIComponent(m);
 
-function receiptCard(p, m, verifyUrl) {
-  return padWrap(`<h2 style="margin:0 0 4px;text-align:center">PAYMENT RECEIPT / টাকা প্রাপ্তি রসিদ</h2><div style="text-align:center">${p.status === 'valid' ? '' : '<b>CANCELLED</b>'}</div><div>Receipt No. <b>${e(p.no)}</b></div><table style="margin-top:14px"><tr><th>Member</th><td>${e(m.name_en)} (${e(m.id)})</td></tr><tr><th>Amount</th><td><b>${money(p.amount)}</b></td></tr><tr><th>For</th><td>${e(p.kind)}</td></tr><tr><th>Date</th><td>${e(p.paid_on)}</td></tr>${p.note ? `<tr><th>Note</th><td>${e(p.note)}</td></tr>` : ''}</table><p class="mut" style="margin-top:14px">Verify this receipt: ${e(verifyUrl)}</p>`, fmtD(p.paid_on));
+
+function moneyReceipt(r, m, verifyUrl) {
+  const ds = dueState(m.id), dep = q1("SELECT COALESCE(SUM(amount),0) t FROM payments WHERE member_id=? AND status='valid'", m.id).t;
+  const row = (ic, l, v, c) => `<div class="mr-r ${c || ''}"><i>${ic}</i><b>${l} :</b><span>${v}</span></div>`;
+  return `<style>
+.mr-bar{max-width:900px;margin:0 auto 12px;display:flex;gap:10px}
+.mr{max-width:900px;margin:0 auto;background:#fff;border:1px solid #D7DCE4;border-radius:10px;overflow:hidden;position:relative;font-family:Inter,Arial,sans-serif;color:#2B3445}
+.mr-h{display:flex;align-items:center;gap:20px;padding:20px 26px 14px;background:linear-gradient(135deg,#fff 70%,#E8F6EE)}
+.mr-h img{height:84px}.mr-h .t1{font-size:26px;font-weight:800;color:#2B3445;line-height:1.1}.mr-h .t2{color:#12815A;font-weight:700;font-size:15px}.mr-h .t3{font-size:19px;font-weight:700}.mr-h .ad{font-size:11.5px;color:#4A5468;margin-top:2px}
+.mr-h .mr-tg{margin-left:auto;font-style:italic;color:#12815A;font-size:13px;text-align:right;max-width:140px;font-weight:600}
+.mr-t{display:flex;align-items:center;justify-content:center;margin:34px 0 14px;border-top:3px solid #12815A;position:relative;height:0}
+.mr-t span{position:absolute;top:-22px;background:#2B3445;color:#fff;font-weight:800;font-size:24px;padding:8px 44px;letter-spacing:.5px;clip-path:polygon(6% 0,94% 0,100% 100%,0 100%)}
+.mr-m{display:flex;justify-content:space-between;padding:30px 26px 10px;gap:14px}
+.mr-f{display:flex;border:1px solid #C9CFD9;border-radius:8px;overflow:hidden;font-size:14px;min-width:200px}.mr-f b{background:#12815A;color:#fff;padding:8px 14px}.mr-f span{padding:8px 14px;flex:1}
+.mr-f.d b{background:#E3F0EA;color:#2B3445}
+.mr-b{margin:8px 26px;border:1px solid #86C9A8;border-radius:10px;padding:10px 16px;display:grid;grid-template-columns:1fr 1fr;gap:2px 28px;position:relative}
+.mr-r{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:14px}.mr-r.w{grid-column:1/3}
+.mr-r i{flex:0 0 34px;height:34px;border-radius:8px;background:#DFF1E7;color:#12815A;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:16px}
+.mr-r b{font-weight:600;white-space:nowrap}.mr-r span{flex:1;border-bottom:1px dashed #6B7385;min-height:20px;padding:0 4px;font-weight:600}
+.mr-w{position:absolute;right:30px;top:10px;bottom:10px;width:300px;background:url(https://rbdf.org/logo.png) center/contain no-repeat;opacity:.05;pointer-events:none}
+.mr-k{display:flex;gap:20px;padding:6px 26px 14px;align-items:flex-end}
+.mr-rm{flex:1;background:#EEF1F5;border-radius:8px;padding:0 0 10px;font-size:13px;min-height:78px}.mr-rm b{display:inline-block;background:#2B3445;color:#fff;padding:6px 26px 6px 14px;border-radius:8px 0 0 0;clip-path:polygon(0 0,88% 0,100% 100%,0 100%)}.mr-rm div{padding:6px 14px 0;border-bottom:1px dashed #9AA2B2;margin:0 14px;min-height:22px}
+.mr-s{text-align:center;font-size:14px;font-weight:600}.mr-s div{border-top:1px dashed #6B7385;padding-top:4px;margin-top:6px;min-width:170px}.mr-s .n{font-size:12px;font-weight:400;color:#4A5468}
+.mr-ft{background:#2B3445;color:#fff;display:flex;justify-content:space-around;gap:10px;padding:14px;font-size:13px;border-top:5px solid #12815A;flex-wrap:wrap}
+.mr-x{position:absolute;top:46%;left:30%;transform:rotate(-14deg);font-size:70px;font-weight:800;color:#C0392B;opacity:.25;border:6px solid #C0392B;padding:0 20px}
+@media(max-width:640px){.mr-h{flex-wrap:wrap}.mr-h .mr-tg{display:none}.mr-b{grid-template-columns:1fr}.mr-r.w{grid-column:auto}.mr-w{display:none}.mr-m{flex-direction:column;padding-top:34px}.mr-k{flex-direction:column;align-items:stretch}.mr-t span{font-size:18px;padding:6px 26px}}
+@media print{@page{size:A5 landscape;margin:0}body{background:#fff!important}.noprint,header,nav{display:none!important}.mr{border:0;border-radius:0;max-width:none;zoom:.78}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+<div class="mr-bar noprint"><button class="btn" onclick="print()">Print / Save PDF</button></div>
+<div class="mr">${r.status === 'valid' ? '' : '<div class="mr-x">CANCELLED</div>'}
+<div class="mr-h"><img src="https://rbdf.org/logo.png" alt="RBDF"><div><div class="t1">Riazuddin Bazar</div><div class="t2">Business Development Forum</div><div class="t3">রিয়াজউদ্দিন বাজার ব্যবসায়ী উন্নয়ন ফোরাম</div><div class="ad">দোকান নং ৩, ২য় তলা, এস এস টাওয়ার, গোটহাট, ১৯ সেন্ট্রাল রোড, কোতোয়ালি, চট্টগ্রাম</div></div><div class="mr-tg">Together For a Stronger Business Community</div></div>
+<div class="mr-t"><span>MONEY RECEIPT</span></div>
+<div class="mr-m"><div class="mr-f"><b>Invoice ID :</b><span>${e(r.no)}</span></div><div class="mr-f d"><b>Date :</b><span>${fmtD(r.paid_on)}</span></div></div>
+<div class="mr-b"><div class="mr-w"></div>
+${row('👤', 'Received From', e(m.name_en))}${row('🪪', 'Member ID', e(m.id))}${row('🪙', 'Payment Purpose', e(r.kind) + (r.note ? ' · ' + e(r.note) : ''), 'w')}
+${row('৳', 'The Amount of', 'TK. ' + num(r.amount) + ' <small style="font-weight:400">(' + e(words(r.amount)) + ' taka only)</small>')}${row('👛', 'Paid by', e((r.method || '') + (r.txn ? ' · ' + r.txn : '')))}
+${row('🧾', 'Total Deposit Amount', 'TK. ' + num(dep))}${row('⏱', 'Due Amount', 'TK. ' + num(ds.total))}</div>
+<div class="mr-k"><div class="mr-rm"><b>Remarks :</b><div>${e(r.note || '')}</div><div></div></div><div style="text-align:center">${qr(verifyUrl)}<div class="mut" style="font-size:10px">Scan to verify</div></div><div class="mr-s"><div>Received by</div><div class="n">${e(mname(r.approved_by || r.collected_by || r.by))}</div></div></div>
+<div class="mr-ft"><span>📍 Riazuddin Bazar, Kotwali, Chattogram</span><span>📞 01324884488</span><span>✉ info@riazuddinbazarforum.com</span></div></div>`;
 }
+function receiptCard(p, m, verifyUrl) { return moneyReceipt(p, m, verifyUrl); }
+const qr = s => `<img alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=${encodeURIComponent(s)}" width="90" height="90">`;
 
 // ---- core helpers v2
 const ipOf = req => (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
@@ -582,9 +621,8 @@ ${tbl(['#', 'Due date', 'Instalment', 'Paid', 'Balance', 'Status'], ins.map(i =>
   if (p === '/admin/print') {
     const t = url.searchParams.get('t') || 'receipt', id = url.searchParams.get('id') || '';
     const wrap = inner => padWrap(inner, fmtD(today()));
-    const qr = s => `<img alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(s)}" width="110" height="110">`;
     let html = '', mem = q1('SELECT * FROM members WHERE id=?', id);
-    if (t === 'receipt') { const r = q1('SELECT * FROM payments WHERE no=?', id) || q1("SELECT * FROM payments WHERE status='valid' ORDER BY seq DESC LIMIT 1"); if (r) { const m = q1('SELECT * FROM members WHERE id=?', r.member_id); const ds = dueState(m.id); html = wrap(`<h2 style="text-align:center">MONEY RECEIPT</h2><div class="row" style="justify-content:space-between"><span>No. <b>${e(r.no)}</b></span><span>Date: ${fmtD(r.paid_on)}</span></div><table><tr><th>Received from</th><td>${e(m.name_en)} · ${e(m.id)}</td></tr><tr><th>Payment for</th><td>${e(r.kind)}</td></tr><tr><th>Method</th><td>${e(r.method || '')}</td></tr><tr><th>Transaction ID</th><td>${e(r.txn || '')}</td></tr><tr><th>Amount</th><td><b>${money(r.amount)}</b><div class="mut">${words(r.amount)} taka only</div></td></tr><tr><th>Remaining due</th><td>${money(ds.total)}</td></tr></table><div class="row" style="justify-content:space-between;margin-top:24px"><div>Collected by: ${e(mname(r.collected_by || r.by))}<br>Approved by: ${e(mname(r.approved_by))}</div><div>${qr('https://verify.rbdf.org/?r=' + r.no)}<div class="mut">Verify: verify.rbdf.org/?r=${e(r.no)}</div></div></div>`); } else html = '<div class="card">No receipt yet.</div>'; }
+    if (t === 'receipt') { const r = q1('SELECT * FROM payments WHERE no=?', id) || q1("SELECT * FROM payments WHERE status='valid' ORDER BY seq DESC LIMIT 1"); if (r) { const m = q1('SELECT * FROM members WHERE id=?', r.member_id); const ds = dueState(m.id); html = moneyReceipt(r, m, 'https://verify.rbdf.org/?r=' + r.no); } else html = '<div class="card">No receipt yet.</div>'; }
     if (t === 'voucher') { const x = q1('SELECT * FROM expenses WHERE id=?', id) || q1("SELECT * FROM expenses WHERE status='paid' ORDER BY id DESC LIMIT 1"); html = x ? wrap(`<h2 style="text-align:center">PAYMENT VOUCHER</h2><div class="row" style="justify-content:space-between"><span>No. <b>${e(x.voucher || 'Draft')}</b></span><span>Date: ${fmtD(x.date)}</span></div><table><tr><th>Paid to</th><td>${e(x.paid_to)}</td></tr><tr><th>Expense head</th><td>${e(x.head)}</td></tr><tr><th>Method</th><td>${e(x.method)}</td></tr><tr><th>Bill / attachment</th><td>${e(x.bill || '–')}</td></tr><tr><th>Amount</th><td><b>${money(x.amount)}</b><div class="mut">${words(x.amount)} taka only</div></td></tr></table><div class="row" style="justify-content:space-between;margin-top:34px"><span>Requested by: ${e(mname(x.requested_by))}</span><span>Approved by: ${e(mname(x.approved_by))}</span><span>Received by: __________</span></div>`) : '<div class="card">No voucher yet.</div>'; }
     if (t === 'id' && mem) html = `<div class="row" style="gap:20px;justify-content:center"><div style="width:324px;border:1px solid #CBD0DA;border-radius:16px;background:#fff;padding:18px"><img src="https://rbdf.org/logo.png" style="height:44px"><div class="mut" style="margin-top:6px">Riazuddin Bazar Business Development Forum</div><div style="margin-top:12px">${av(mem.id, 90)}</div><h3 style="margin:10px 0 2px">${e(mem.name_en)}</h3><div class="bn">${e(mem.name_bn)}</div><div class="tag" style="margin:6px 0">${e(mem.role)}</div><div>ID: <b>${e(mem.id)}</b></div><div class="mut">Joined: ${fmtD(mem.joined)}</div></div><div style="width:324px;border:1px solid #CBD0DA;border-radius:16px;background:#fff;padding:18px;text-align:center"><div class="mut">If found, please return to:<br>Shop No. 3, 2nd Floor, SS Tower, Gostohata, 92 Station Road, Kotwali, Chattogram<br>01324884488</div><div style="margin:12px 0">${qr('https://verify.rbdf.org/?m=' + mem.id)}</div><div class="mut">Scan to verify membership · www.rbdf.org</div></div></div><p class="noprint" style="text-align:center"><button class="btn" onclick="print()">Print</button></p>`;
     if (t === 'cert' && mem) html = wrap(`<h1 style="text-align:center;letter-spacing:2px">SHARE CERTIFICATE</h1><p style="text-align:center" class="mut">Certificate No. SC-${String(mem.seq).padStart(4, '0')}</p><p style="font-size:18px;line-height:2;text-align:center">This is to certify that<br><b style="font-size:24px">${e(mem.name_en)}</b> (${e(mem.id)})<br>is the registered holder of <b>${mem.shares} (${words(mem.shares).toLowerCase()}) share${mem.shares > 1 ? 's' : ''}</b> of BDT ${num(c.share_price)} each in the Riazuddin Bazar Business Development Forum, issued on ${fmtD(today())}.</p><div class="row" style="justify-content:space-between;margin-top:60px"><span>President</span><span>Secretary</span></div>`);
