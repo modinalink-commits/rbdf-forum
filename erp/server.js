@@ -606,6 +606,13 @@ ${tbl(['#', 'Due date', 'Instalment', 'Paid', 'Balance', 'Status'], ins.map(i =>
     const bs = q('SELECT * FROM backups ORDER BY id DESC LIMIT 40'), last = bs.find(b => b.status === 'Success');
     out('/admin/backup', 'Backup & Recovery', 'Your data is copied automatically and can be restored when needed.', `<div class="row" style="margin-bottom:14px">${pf('now', {}, 'Back up now', 'btn')}</div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${[['Daily database backup', 'Automatic, every 24 hours', last ? 'Last run: ' + fmtD(last.ts) : 'Not run yet'], ['Retention', 'Latest 30 copies kept', 'On the server volume'], ['Off-server copy', 'Download from the list below', 'Keep a copy on your own computer']].map(([l, v, n]) => `<div class="card"><div class="mut">${l}</div><div class="kpi" style="font-size:17px">${v}</div><div class="mut">${n}</div></div>`).join('')}</div><h2 style="margin:20px 0 10px">Backup history</h2>${tbl(['Date', 'Type', 'Size', 'Stored', 'Status', ''], bs.map(b => [new Date(b.ts).toLocaleString('en-GB', { timeZone: 'Asia/Dhaka' }), e(b.type), b.size ? (b.size / 1024 / 1024).toFixed(2) + ' MB' : '–', 'Server', stTag(b.status), b.status === 'Success' ? `<a href="/admin/backup/dl/${b.id}">Download</a> <form method="post" class="row" style="display:inline-flex">${hid({ act: 'restore', id: b.id })}<input name="confirm" placeholder="Type RESTORE" style="min-height:32px;width:120px"><button class="btn d s">Restore</button></form>` : '']), 'No backups yet.')}`); return true;
   }
+  if (p === '/admin/smstest' && POST) {
+    if (!top()) return true; const to = String(post.to || '').replace(/\D/g, '');
+    if (!/^(88)?01\d{9}$/.test(to)) { go('/admin/integrations', '!Enter a valid 11-digit mobile number.'); return true; }
+    const id = queueSms(to, 'RBF test SMS ' + new Date().toLocaleTimeString('en-GB') + ' - Riazuddin Bazar Forum', u.id); audit(u, 'Integrations', 'Test SMS', '', to, req);
+    setTimeout(() => { const r = q1('SELECT status,err FROM sms_log WHERE id=?', id); kvset('integ_test_sms', r ? r.status + (r.err ? ': ' + r.err : '') : ''); }, 5000);
+    go('/admin/integrations', 'Test SMS queued to ' + to + '.'); return true;
+  }
   // ----- integrations
   if (p === '/admin/integrations') {
     if (!top()) return true; const I = integ();
