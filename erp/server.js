@@ -149,7 +149,7 @@ function moneyReceipt(r, m, verifyUrl) {
 .mr-bar{max-width:900px;margin:0 auto 12px;display:flex;gap:10px}
 .mr{max-width:900px;margin:0 auto;background:#fff;border:1px solid #D7DCE4;border-radius:10px;overflow:hidden;position:relative;font-family:Inter,Arial,sans-serif;color:#2B3445}
 .mr-h{display:flex;align-items:center;gap:20px;padding:20px 26px 14px;background:linear-gradient(135deg,#fff 70%,#E8F6EE)}
-.mr-h img{height:84px}.mr-h .t1{font-size:26px;font-weight:800;color:#2B3445;line-height:1.1}.mr-h .t2{color:#12815A;font-weight:700;font-size:15px}.mr-h .t3{font-size:19px;font-weight:700}.mr-h .ad{font-size:11.5px;color:#4A5468;margin-top:2px}
+.mr-h img{height:66px;max-width:46%;object-fit:contain}.mr-ad{flex:1;min-width:0;border-left:3px solid #12815A;padding-left:16px}.mr-h .t3{font-size:19px;font-weight:700;line-height:1.3}.mr-h .ad{font-size:12px;color:#4A5468;margin-top:4px;line-height:1.5}
 .mr-h .mr-tg{margin-left:auto;font-style:italic;color:#12815A;font-size:13px;text-align:right;max-width:140px;font-weight:600}
 .mr-t{display:flex;align-items:center;justify-content:center;margin:34px 0 14px;border-top:3px solid #12815A;position:relative;height:0}
 .mr-t span{position:absolute;top:-22px;background:#2B3445;color:#fff;font-weight:800;font-size:24px;padding:8px 44px;letter-spacing:.5px;clip-path:polygon(6% 0,94% 0,100% 100%,0 100%)}
@@ -159,26 +159,26 @@ function moneyReceipt(r, m, verifyUrl) {
 .mr-b{margin:8px 26px;border:1px solid #86C9A8;border-radius:10px;padding:10px 16px;display:grid;grid-template-columns:1fr 1fr;gap:2px 28px;position:relative}
 .mr-r{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:14px}.mr-r.w{grid-column:1/3}
 .mr-r i{flex:0 0 34px;height:34px;border-radius:8px;background:#DFF1E7;color:#12815A;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:16px}
-.mr-r b{font-weight:600;white-space:nowrap}.mr-r span{flex:1;border-bottom:1px dashed #6B7385;min-height:20px;padding:0 4px;font-weight:600}
-.mr-w{position:absolute;right:30px;top:10px;bottom:10px;width:300px;background:url(https://rbdf.org/logo.png) center/contain no-repeat;opacity:.05;pointer-events:none}
-.mr-k{display:flex;gap:20px;padding:6px 26px 14px;align-items:flex-end}
+.mr-r b{font-weight:600;white-space:nowrap}.mr-r.amt span{color:#0D6446;font-size:16px;background:#EAF7F0;border-radius:6px 6px 0 0}.mr-r span{flex:1;border-bottom:1px dashed #6B7385;min-height:20px;padding:0 4px;font-weight:600}
+.mr-w{position:absolute;right:30px;top:10px;bottom:10px;width:300px;background:url(https://rbdf.org/favicon.png) center/contain no-repeat;opacity:.07;pointer-events:none}
+.mr-k{position:relative;display:flex;gap:20px;padding:6px 26px 14px;align-items:flex-end}
 .mr-rm{flex:1;background:#EEF1F5;border-radius:8px;padding:0 0 10px;font-size:13px;min-height:78px}.mr-rm b{display:inline-block;background:#2B3445;color:#fff;padding:6px 26px 6px 14px;border-radius:8px 0 0 0;clip-path:polygon(0 0,88% 0,100% 100%,0 100%)}.mr-rm div{padding:6px 14px 0;border-bottom:1px dashed #9AA2B2;margin:0 14px;min-height:22px}
-.mr-s{text-align:center;font-size:14px;font-weight:600}.mr-s div{border-top:1px dashed #6B7385;padding-top:4px;margin-top:6px;min-width:170px}.mr-s .n{font-size:12px;font-weight:400;color:#4A5468}
+.mr-s{text-align:center;font-size:14px;font-weight:600}.mr-s{min-width:190px;padding-bottom:4px}.mr-s .n{font-size:13px;font-weight:600;color:#2B3445;margin:0 0 4px;min-height:18px}.mr-s .l{border-top:1px dashed #6B7385;padding-top:4px}
 .mr-ft{background:#2B3445;color:#fff;display:flex;justify-content:space-around;gap:10px;padding:14px;font-size:13px;border-top:5px solid #12815A;flex-wrap:wrap}
-.mr-x{position:absolute;top:46%;left:30%;transform:rotate(-14deg);font-size:70px;font-weight:800;color:#C0392B;opacity:.25;border:6px solid #C0392B;padding:0 20px}
-@media(max-width:640px){.mr-h{flex-wrap:wrap}.mr-h .mr-tg{display:none}.mr-b{grid-template-columns:1fr}.mr-r.w{grid-column:auto}.mr-w{display:none}.mr-m{flex-direction:column;padding-top:34px}.mr-k{flex-direction:column;align-items:stretch}.mr-t span{font-size:18px;padding:6px 26px}}
+.mr-pd{align-self:center;pointer-events:none;transform:rotate(-12deg);border:3px double #12815A;color:#12815A;border-radius:10px;padding:2px 16px;font-weight:800;font-size:24px;letter-spacing:3px;opacity:.75;background:rgba(255,255,255,.6)}.mr-x{position:absolute;top:46%;left:30%;transform:rotate(-14deg);font-size:70px;font-weight:800;color:#C0392B;opacity:.25;border:6px solid #C0392B;padding:0 20px}
+@media(max-width:640px){.mr-r{flex-wrap:wrap}.mr-r span{flex:1 1 100%;margin-left:44px}.mr-pd{align-self:center;transform:rotate(-6deg)}.mr-h img{max-width:60%}.mr-h{flex-wrap:wrap}.mr-h .mr-tg{display:none}.mr-b{grid-template-columns:1fr}.mr-r.w{grid-column:auto}.mr-w{display:none}.mr-m{flex-direction:column;padding-top:34px}.mr-k{flex-direction:column;align-items:stretch}.mr-t span{font-size:18px;padding:6px 26px}}
 @media print{@page{size:A5 landscape;margin:0}body{background:#fff!important}.noprint,header,nav{display:none!important}.mr{border:0;border-radius:0;max-width:none;zoom:.78}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 <div class="mr-bar noprint"><button class="btn" onclick="print()">Print / Save PDF</button></div>
 <div class="mr">${r.status === 'valid' ? '' : '<div class="mr-x">CANCELLED</div>'}
-<div class="mr-h"><img src="https://rbdf.org/logo.png" alt="RBDF"><div><div class="t1">Riazuddin Bazar</div><div class="t2">Business Development Forum</div><div class="t3">রিয়াজউদ্দিন বাজার ব্যবসায়ী উন্নয়ন ফোরাম</div><div class="ad">দোকান নং ৩, ২য় তলা, এস এস টাওয়ার, গোটহাট, ১৯ সেন্ট্রাল রোড, কোতোয়ালি, চট্টগ্রাম</div></div><div class="mr-tg">Together For a Stronger Business Community</div></div>
+<div class="mr-h"><img src="https://rbdf.org/logo.png" alt="Riazuddin Bazar Business Development Forum"><div class="mr-ad"><div class="t3">রিয়াজউদ্দিন বাজার ব্যবসায়ী উন্নয়ন ফোরাম</div><div class="ad">দোকান নং ৩, ২য় তলা, এস এস টাওয়ার, গোটহাট,<br>১৯ সেন্ট্রাল রোড, কোতোয়ালি, চট্টগ্রাম</div></div><div class="mr-tg">Together For a Stronger Business Community</div></div>
 <div class="mr-t"><span>MONEY RECEIPT</span></div>
-<div class="mr-m"><div class="mr-f"><b>Invoice ID :</b><span>${e(r.no)}</span></div><div class="mr-f d"><b>Date :</b><span>${fmtD(r.paid_on)}</span></div></div>
+<div class="mr-m"><div class="mr-f"><b>Invoice ID :</b><span>${e(r.no)}</span></div>${r.status === 'valid' ? '<div class="mr-pd">PAID</div>' : ''}<div class="mr-f d"><b>Date :</b><span>${fmtD(r.paid_on)}</span></div></div>
 <div class="mr-b"><div class="mr-w"></div>
 ${row('👤', 'Received From', e(m.name_en))}${row('🪪', 'Member ID', e(m.id))}${row('🪙', 'Payment Purpose', e(r.kind) + (r.note ? ' · ' + e(r.note) : ''), 'w')}
-${row('৳', 'The Amount of', 'TK. ' + num(r.amount) + ' <small style="font-weight:400">(' + e(words(r.amount)) + ' taka only)</small>')}${row('👛', 'Paid by', e((r.method || '') + (r.txn ? ' · ' + r.txn : '')))}
+${row('৳', 'The Amount of', 'TK. ' + num(r.amount) + ' <small style="font-weight:400;color:#4A5468">(' + e(words(r.amount)) + ' taka only)</small>', 'amt')}${row('👛', 'Paid by', e((r.method || '') + (r.txn ? ' · ' + r.txn : '')))}
 ${row('🧾', 'Total Deposit Amount', 'TK. ' + num(dep))}${row('⏱', 'Due Amount', 'TK. ' + num(ds.total))}</div>
-<div class="mr-k"><div class="mr-rm"><b>Remarks :</b><div>${e(r.note || '')}</div><div></div></div><div style="text-align:center">${qr(verifyUrl)}<div class="mut" style="font-size:10px">Scan to verify</div></div><div class="mr-s"><div>Received by</div><div class="n">${e(mname(r.approved_by || r.collected_by || r.by))}</div></div></div>
+<div class="mr-k"><div class="mr-rm"><b>Remarks :</b><div>${e(r.note || '')}</div><div></div></div><div style="text-align:center">${qr(verifyUrl)}<div class="mut" style="font-size:10px">Scan to verify</div></div><div class="mr-s"><div class="n">${e(mname(r.approved_by || r.collected_by || r.by))}</div><div class="l">Received by</div></div></div>
 <div class="mr-ft"><span>📍 Riazuddin Bazar, Kotwali, Chattogram</span><span>📞 01324884488</span><span>✉ info@riazuddinbazarforum.com</span></div></div>`;
 }
 function receiptCard(p, m, verifyUrl) { return moneyReceipt(p, m, verifyUrl); }
