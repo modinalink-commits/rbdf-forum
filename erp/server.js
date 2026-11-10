@@ -290,6 +290,15 @@ async function adminApp(req, res, u, p, post, url, msg) {
   }
   // ----- members
   if (p === '/admin/members/export.csv') { reportOut(res, mkReport('member'), 'csv'); return true; }
+  if (p === '/admin/members/cell' && POST) {
+    const j = (c, o) => { res.writeHead(c, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); };
+    const m = q1("SELECT * FROM members WHERE id=? AND id!='admin'", post.id), f = post.f, v = String(post.v ?? '').trim();
+    if (!m || !['name_en', 'name_bn', 'mobile', 'shares', 'role', 'email'].includes(f)) { j(400, { ok: false, error: 'Not allowed' }); return true; }
+    let nv = v; if (f === 'mobile') { nv = normMobile(v); if (nv.length < 11) { j(400, { ok: false, error: 'Invalid mobile' }); return true; } const o = q1('SELECT id FROM members WHERE mobile=? AND id!=?', nv, m.id); if (o) { j(400, { ok: false, error: 'Mobile already used by ' + o.id }); return true; } }
+    if (f === 'shares') { nv = parseInt(v); if (!(nv >= 0)) { j(400, { ok: false, error: 'Invalid number' }); return true; } }
+    if (f === 'name_en' && !v) { j(400, { ok: false, error: 'Name required' }); return true; }
+    run('UPDATE members SET ' + f + '=? WHERE id=?', nv, m.id); audit(u, 'Members', 'Edited ' + f + ' of ' + m.id, m[f], nv, req); j(200, { ok: true, v: nv }); return true;
+  }
   if (p === '/admin/members') {
     if (POST && act === 'add') {
       const mob = normMobile(post.mobile); if (!String(post.name_en || '').trim() || mob.length < 11) { go('/admin/members', '!Name and a valid mobile are required.'); return true; }
@@ -306,8 +315,8 @@ async function adminApp(req, res, u, p, post, url, msg) {
     out('/admin/members', 'Members', `${all} members · ${q1("SELECT COALESCE(SUM(shares),0) c FROM members WHERE id!='admin'").c} shares · members are never deleted, only change status`, `<div class="row" style="margin-bottom:14px"><a class="btn o" href="/admin/members/export.csv">Export Excel</a><a class="btn" href="?add=1">Add member</a></div>
 ${url.searchParams.get('add') ? `<form method="post" class="card grid" style="max-width:560px;margin-bottom:16px">${hid({ act: 'add' })}<b>Add member</b><label>Name (English)<input name="name_en" required></label><label>Name (বাংলা)<input name="name_bn"></label><label>Mobile<input name="mobile" required placeholder="01XXXXXXXXX"></label><label>Role${sel('role', ['Member', 'Executive Member', 'Advisor', 'Treasurer', 'Secretary', 'President'], 'Member')}</label><label>Shares<input name="shares" type="number" min="1" value="1"></label><button class="btn">Save member</button></form>` : ''}
 <form class="row" style="margin-bottom:12px"><input name="q" value="${e(qq)}" placeholder="Search name, ID or mobile" style="min-width:260px"><input type="hidden" name="st" value="${e(st)}"><button class="btn o">Search</button></form><div class="row" style="margin-bottom:14px">${chips}</div>
-${tbl(['Member', 'Mobile', 'Shares', 'Paid', 'Due', 'Status', ''], rows.map(m => { const paid = q1("SELECT COALESCE(SUM(credit),0) c FROM ledger WHERE member_id=?", m.id).c; return [`<b>${e(m.name_en)}</b><div class="mut">${e(m.id)}</div>`, e(m.mobile), m.shares, money(paid), money(dueState(m.id).total), stTag(m.status), `<a href="/admin/members/${e(m.id)}">View</a>`]; }), 'No members found.')}
-<div class="row" style="margin-top:12px"><span class="mut">Showing ${tot ? (pg - 1) * PAGE + 1 : 0}–${Math.min(pg * PAGE, tot)} of ${tot}</span>${pg > 1 ? `<a class="btn o s" href="?st=${e(st)}&q=${e(qq)}&pg=${pg - 1}">Previous</a>` : ''}${pg * PAGE < tot ? `<a class="btn o s" href="?st=${e(st)}&q=${e(qq)}&pg=${pg + 1}">Next</a>` : ''}</div>`);
+${tbl(['Member', 'Mobile', 'Shares', 'Paid', 'Due', 'Status', ''], rows.map(m => { const paid = q1("SELECT COALESCE(SUM(credit),0) c FROM ledger WHERE member_id=?", m.id).c; return [`<b data-e="name_en" data-id="${e(m.id)}" title="Double-click to edit">${e(m.name_en)}</b><div class="mut">${e(m.id)}</div>`, `<span data-e="mobile" data-id="${e(m.id)}" title="Double-click to edit">${e(m.mobile)}</span>`, `<span data-e="shares" data-id="${e(m.id)}" title="Double-click to edit">${m.shares}</span>`, money(paid), money(dueState(m.id).total), stTag(m.status), `<a href="/admin/members/${e(m.id)}">View</a>`]; }), 'No members found.')}
+<p class="mut">Tip: double-click a name, mobile or share count in the table to edit it right there. Press Enter to save, Esc to cancel.</p><script>document.addEventListener('dblclick',function(ev){var t=ev.target.closest('[data-e]');if(!t||t.querySelector('input'))return;var old=t.textContent,i=document.createElement('input');i.value=old;i.style.cssText='min-height:34px;width:100%;min-width:120px;font-size:14px;padding:0 8px';t.textContent='';t.appendChild(i);i.focus();i.select();var done=false;function fin(save){if(done)return;done=true;if(!save||i.value.trim()===old){t.textContent=old;return}var b=new URLSearchParams({id:t.dataset.id,f:t.dataset.e,v:i.value});t.textContent='…';fetch('/admin/members/cell',{method:'POST',body:b,headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(function(r){return r.json()}).then(function(o){if(o.ok){t.textContent=o.v;t.style.background='#E3F5EC'}else{t.textContent=old;alert(o.error||'Not saved')}}).catch(function(){t.textContent=old;alert('Not saved')})}i.onkeydown=function(k){if(k.key==='Enter')fin(true);if(k.key==='Escape')fin(false)};i.onblur=function(){fin(true)}});</script><div class="row" style="margin-top:12px"><span class="mut">Showing ${tot ? (pg - 1) * PAGE + 1 : 0}–${Math.min(pg * PAGE, tot)} of ${tot}</span>${pg > 1 ? `<a class="btn o s" href="?st=${e(st)}&q=${e(qq)}&pg=${pg - 1}">Previous</a>` : ''}${pg * PAGE < tot ? `<a class="btn o s" href="?st=${e(st)}&q=${e(qq)}&pg=${pg + 1}">Next</a>` : ''}</div>`);
     return true;
   }
   let m3 = /^\/admin\/members\/([A-Za-z0-9-]+)$/.exec(p);
@@ -679,7 +688,7 @@ http.createServer(async (req, res) => {
   try {
     const host = (req.headers.host || '').split(':')[0].toLowerCase();
     const url = new URL(req.url, 'https://' + host);
-    if (req.method === 'POST') { const o = req.headers.origin; if (o && new URL(o).host !== host) return send(res, 403, 'Bad origin'); }
+    if (req.method === 'POST') { const o = req.headers.origin; if (o && new URL(o).hostname !== host) return send(res, 403, 'Bad origin'); }
     if (host === 'verify.rbdf.org') { if (url.searchParams.get('m')) return send(res, 200, verifyMember(url.searchParams.get('m'))); const pp = /^\/receipt\/([\w-]+)$/.exec(url.pathname); return send(res, 200, verifyPage(url.searchParams.get('r') || (pp ? pp[1] : ''))); }
     if (host === 'api.rbdf.org') {
       res.setHeader('Access-Control-Allow-Origin', '*');
