@@ -28,3 +28,7 @@ forum-group.jpg
 og-image.jpg
 robots.txt
 sitemap.xml
+proj-1.svg
+proj-2.svg
+proj-3.svg
+proj-4.svg
