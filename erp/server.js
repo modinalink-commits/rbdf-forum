@@ -194,7 +194,7 @@ async function deliver(id) {
     run('UPDATE sms_log SET status=?, err=? WHERE id=?', resp.ok ? 'sent' : 'failed', resp.ok ? '' : t, id);
   } catch (er) { run("UPDATE sms_log SET status='failed', err=? WHERE id=?", String(er.message).slice(0, 120), id); }
 }
-function queueSms(to, msg, member, channel = 'SMS', sendAt = '') { const r = run('INSERT INTO sms_log(ts,to_num,member_id,msg,channel,status,send_at) VALUES(?,?,?,?,?,?,?)', new Date().toISOString(), to, member || '', msg, channel, 'queued', sendAt); if (!sendAt) deliver(Number(r.lastInsertRowid)); return Number(r.lastInsertRowid); }
+function queueSms(to, msg, member, channel = 'SMS', sendAt = '') { if (channel === 'SMS' && !/^01\d{9}$/.test(normMobile(to))) { const r0 = run('INSERT INTO sms_log(ts,to_num,member_id,msg,channel,status,send_at,err) VALUES(?,?,?,?,?,?,?,?)', new Date().toISOString(), to, member || '', msg, channel, 'skipped', '', 'Not a Bangladesh mobile number'); return Number(r0.lastInsertRowid); } const r = run('INSERT INTO sms_log(ts,to_num,member_id,msg,channel,status,send_at) VALUES(?,?,?,?,?,?,?)', new Date().toISOString(), to, member || '', msg, channel, 'queued', sendAt); if (!sendAt) deliver(Number(r.lastInsertRowid)); return Number(r.lastInsertRowid); }
 setInterval(() => { const n = new Date().toISOString(); q("SELECT id FROM sms_log WHERE status='queued' AND send_at!='' AND send_at<=?", n).forEach(r => deliver(r.id)); }, 60000);
 // backups
 const BK = DATA + '/backups'; fs.mkdirSync(BK, { recursive: true });
