@@ -159,7 +159,8 @@ main>h1:first-child{display:none}
 .sec{margin:22px 4px 10px;font-size:17px;font-weight:700}
 .qa{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.qa a{display:flex;flex-direction:column;align-items:center;gap:7px;text-decoration:none;color:#262B38;font-size:12.5px;font-weight:600;text-align:center}.qa .ci{width:56px;height:56px;border-radius:18px;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center}
 .nt{background:#fff;border-radius:18px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(38,43,56,.07)}.nt b{display:block;margin:2px 0 4px}
-@media(min-width:761px){.hero,.duecard,.kp,.qa,.nt{max-width:720px}}
+@media(min-width:761px){.top nav{flex-wrap:nowrap!important}.top nav a{white-space:nowrap;padding:8px 10px!important}.top .wrap{gap:12px!important}.top .wrap>img{height:34px!important}}@media(min-width:761px) and (max-width:1100px){.top .wrap>.mut{display:none}}
+@media(min-width:761px){.dash{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}.dash .sec:first-child{margin-top:0}.qa{grid-template-columns:repeat(3,1fr)}.qa a{background:#fff;border-radius:18px;padding:16px 8px;box-shadow:0 2px 10px rgba(38,43,56,.07)}}@media(min-width:761px) and (max-width:900px){.dash{grid-template-columns:1fr}}
 </style>`;
 function shell(u, active, body, msg) {
   const adm = u.is_admin;
@@ -773,13 +774,13 @@ async function memberApp(req, res, url) {
     const paid = mine.reduce((x, y) => x + y.amount, 0), ds = dueState(u.id), nx = ds.open[0];
     const nts = q('SELECT * FROM notices ORDER BY id DESC LIMIT 2');
     const qa = [['/id', 'id', 'My ID'], ['/pay', 'pay', 'Pay'], ['/payments', 'rec', 'Receipts'], ['/ledger', 'list', 'Statement'], ['/notices', 'bell', 'Notices'], ['/password', 'lock', 'Password']];
-    return send(res, 200, shell(u, '/', `<div class="hero">${av(u.id, 64)}<div><div class="hn">${e(u.name_en)}</div><div class="hb">${e(u.name_bn)}</div><div class="chips"><span>${e(u.id)}</span><span>${e(u.role)}</span></div></div></div>
+    return send(res, 200, shell(u, '/', `<div class="dash"><div><div class="hero">${av(u.id, 64)}<div><div class="hn">${e(u.name_en)}</div><div class="hb">${e(u.name_bn)}</div><div class="chips"><span>${e(u.id)}</span><span>${e(u.role)}</span></div></div></div>
 <div class="duecard"><div class="mut">Current due</div><div class="amt ${ds.total > 0 ? '' : 'ok'}">${money(ds.total)}</div><div class="mut">${nx ? e(nx.descr) + ' · due ' + e(fmtD(nx.due_date || nx.date)) : 'All clear. Thank you!'}</div>${ds.total > 0 ? '<a class="btn" href="/pay">Pay now</a>' : ''}</div>
 <div class="kp"><div><b>${u.shares}</b><span>Shares</span></div><div><b>${money(paid)}</b><span>Total paid</span></div><div><b>${e(fmtD(u.joined))}</b><span>Member since</span></div></div>
 <div class="sec">Quick actions</div><div class="qa">${qa.map(([h, k, l]) => `<a href="${h}"><span class="ci">${ico(k)}</span>${l}</a>`).join('')}</div>
-${nts.length ? `<div class="sec">Latest notices</div>${nts.map(n => `<a href="/notices" style="text-decoration:none;color:inherit"><div class="nt"><span class="mut">${e(n.created)}</span><b>${e(n.title)}</b><span class="mut">${e(String(n.body).slice(0, 90))}${String(n.body).length > 90 ? '…' : ''}</span></div></a>`).join('')}` : ''}
+</div><div>${nts.length ? `<div class="sec">Latest notices</div>${nts.map(n => `<a href="/notices" style="text-decoration:none;color:inherit"><div class="nt"><span class="mut">${e(n.created)}</span><b>${e(n.title)}</b><span class="mut">${e(String(n.body).slice(0, 90))}${String(n.body).length > 90 ? '…' : ''}</span></div></a>`).join('')}` : ''}
 <div class="sec">Deposit account</div>${bankCard()}
-<div class="sec">Latest payments</div>${payTable(mine.slice(0, 5))}`, msg));
+<div class="sec">Latest payments</div>${payTable(mine.slice(0, 5))}</div></div>`, msg));
   }
   if (p === '/payments') return send(res, 200, shell(u, '/payments', `<h1>My payments</h1>${payTable(q('SELECT * FROM payments WHERE member_id=? ORDER BY seq DESC', u.id))}`, msg));
   if (p === '/notices') return send(res, 200, shell(u, '/notices', `<h1>Notices</h1><div class="grid">${q('SELECT * FROM notices ORDER BY id DESC').map(n => `<div class="card"><div class="mut">${e(n.created)}</div><h3 style="margin:4px 0 8px">${e(n.title)}</h3><div style="white-space:pre-wrap;line-height:1.6">${e(n.body)}</div></div>`).join('') || '<div class="card mut">No notices yet.</div>'}</div>`, msg));
