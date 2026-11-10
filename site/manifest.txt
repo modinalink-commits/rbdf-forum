@@ -24,3 +24,4 @@ photo-RBF-117.jpg
 photo-RBF-118.jpg
 photo-RBF-119.jpg
 photo-RBF-120.jpg
+forum-group.jpg

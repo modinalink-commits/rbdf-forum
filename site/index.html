@@ -129,10 +129,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <section id="about" style="padding:88px 0">
 <div style="max-width:1280px;margin:0 auto;padding:0 32px;display:flex;flex-wrap:wrap;gap:56px;align-items:center">
 <div style="flex:1 1 440px;min-width:0">
-<div style="aspect-ratio:4/3;border-radius:24px;background:linear-gradient(135deg,#E3F5EC,#D3EBE0);border:1px solid #CFE6DB;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#0D6446">
-<img src="/_blob/e3dee8e819cf790e7ae4a46f638005f8" alt="" style="width:150px;height:auto;opacity:.95">
-<span style="font-size:13.5px;font-weight:600">Forum group / office photo goes here</span>
-</div>
+<figure style="margin:0;position:relative"><div style="position:absolute;inset:18px -14px -14px 18px;border-radius:26px;background:#E3F5EC;border:1px solid #CFE6DB"></div><div style="position:relative;border-radius:24px;overflow:hidden;background:#fff;border:6px solid #fff;box-shadow:0 18px 44px rgba(20,40,60,.16)"><img src="/forum-group.jpg" alt="Riazuddin Bazar Business Development Forum members together" width="1600" height="900" loading="lazy" style="display:block;width:100%;height:auto;border-radius:18px"><figcaption style="position:absolute;left:0;right:0;bottom:0;padding:34px 18px 14px;background:linear-gradient(180deg,transparent,rgba(20,32,48,.78));color:#fff;font-size:14px;font-weight:600;border-radius:0 0 18px 18px">Forum members &middot; Together for a stronger business community</figcaption></div></figure>
+
 </div>
 <div style="flex:1 1 440px;min-width:0">
 <div class="bn" style="font-size:15px;font-weight:600;color:#12815A">আমাদের সম্পর্কে</div>
@@ -966,4 +964,51 @@ Phone: 01324884488<br>Email: info@rbdf.org<br>Web: www.rbdf.org<br>SS Tower, Gos
 </footer>
 </div>
 </div><script>(function(){function go(){var els=[].slice.call(document.querySelectorAll('div,span')).filter(function(x){return x.children.length===0&&/RBF-1\d\d/.test(x.textContent)});els.forEach(function(el){var id=(/RBF-1\d\d/.exec(el.textContent)||[])[0],c=el,av=null;for(var i=0;i<5&&c&&!av;i++){c=c.parentElement;if(!c)break;av=[].slice.call(c.querySelectorAll('div')).filter(function(d){return d.children.length===0&&/^[A-Z]{1,3}$/.test(d.textContent.trim())})[0]}if(!av)return;var im=new Image();im.onload=function(){av.textContent='';av.style.backgroundImage='url(/photo-'+id+'.jpg)';av.style.backgroundSize='cover';av.style.backgroundPosition='center top'};im.src='/photo-'+id+'.jpg'})}if(document.readyState!=='loading')go();else document.addEventListener('DOMContentLoaded',go)})();</script>
+<style>html{scroll-behavior:smooth}#dsk section[id]{scroll-margin-top:96px}#mob section{scroll-margin-top:70px}
+#dsk header nav[aria-label=Main] a{padding:0 9px!important;white-space:nowrap}#dsk header>div{gap:14px!important}
+.hl{animation:hl 1.6s ease}@keyframes hl{0%,60%{box-shadow:0 0 0 4px rgba(18,129,90,.35);border-radius:18px}100%{box-shadow:0 0 0 0 rgba(18,129,90,0)}}
+.rb-m{position:fixed;inset:0;z-index:100;background:rgba(20,28,40,.55);display:flex;align-items:center;justify-content:center;padding:18px}
+.rb-m>div{background:#fff;border-radius:20px;max-width:480px;width:100%;max-height:86vh;overflow:auto;padding:26px;position:relative;font-family:Inter,'Hind Siliguri',system-ui,sans-serif;color:#262B38;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+.rb-m .x{position:absolute;right:12px;top:10px;border:0;background:#F0F2F5;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer}
+.rb-m h3{margin:0 0 6px;font-size:21px}.rb-m p{margin:8px 0 0;line-height:1.65;font-size:15px;color:#414859}
+.rb-mn{position:fixed;left:0;right:0;top:0;z-index:99;background:#fff;border-bottom:1px solid #E3E6EC;padding:64px 16px 14px;box-shadow:0 14px 30px rgba(0,0,0,.12);display:none}.rb-mn.on{display:block}
+.rb-mn a{display:flex;align-items:center;min-height:48px;padding:0 10px;border-bottom:1px solid #F0F2F5;color:#262B38;text-decoration:none;font-weight:600;font-family:Inter,system-ui,sans-serif}
+.rb-ok{margin-top:14px;padding:12px 14px;border-radius:12px;background:#E3F5EC;color:#0D6446;font-weight:600;font-size:14.5px}.rb-er{background:#FDE7E5;color:#9B2C22}
+</style>
+<script>(function(){
+var $=function(s,r){return(r||document).querySelector(s)},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s))};
+function txt(e){return(e.textContent||'').replace(/\s+/g,' ').trim()}
+var dsk=$('#dsk'),mob=$('#mob');
+/* mobile: section ids, members section, menu */
+function msec(h){return $$('section',mob).filter(function(s){var x=$('h2',s);return x&&txt(x).indexOf(h)===0})[0]}
+var mAbout=msec('About'),mComm=msec('Executive'),mNot=msec('Latest Notices'),mPort=msec('Your Forum'),mOff=msec('Visit Our Office');
+var dm=$('#members',dsk);
+if(dm&&mComm){var cl=dm.cloneNode(true);cl.removeAttribute('id');$$('a',cl).forEach(function(a){if(/View All/.test(txt(a)))a.parentNode.removeChild(a)});mComm.parentNode.insertBefore(cl,mNot);cl.setAttribute('data-m','members');var mMem=cl;var ins=$('div',cl);}
+var fg=$('figure',dsk);if(fg&&mAbout){var f2=fg.cloneNode(true);f2.style.margin='0 0 18px';var h=$('h2',mAbout);mAbout.insertBefore(f2,h.previousElementSibling&&h.previousElementSibling.tagName==='DIV'?h.previousElementSibling:h)}if(mAbout)mAbout.id='m-about';if(mComm)mComm.id='m-committee';if(mMem)mMem.id='m-members';if(mNot)mNot.id='m-notices';if(mPort)mPort.id='m-portal';if(mOff)mOff.id='m-contact';
+var mn=document.createElement('div');mn.className='rb-mn';mn.innerHTML='<a href="#m-about">About</a><a href="#m-committee">Committee</a><a href="#m-members">Members</a><a href="#m-notices">Notices</a><a href="#m-portal">Member Portal</a><a href="#m-contact">Contact</a><a href="https://verify.rbdf.org">Receipt Verification</a>';
+mob.appendChild(mn);
+var mbtn=$('button[aria-label=Menu]',mob);
+if(mbtn){mbtn.style.position='relative';mbtn.style.zIndex=100;mbtn.addEventListener('click',function(e){e.stopPropagation();mn.classList.toggle('on')})}
+mn.addEventListener('click',function(e){if(e.target.tagName==='A'&&e.target.getAttribute('href').charAt(0)==='#')mn.classList.remove('on')});
+document.addEventListener('click',function(e){if(!mn.contains(e.target)&&e.target!==mbtn)mn.classList.remove('on')});
+/* modal */
+function modal(html){var o=document.createElement('div');o.className='rb-m';o.innerHTML='<div><button class="x" aria-label="Close">&times;</button>'+html+'</div>';function close(){if(o.parentNode)o.parentNode.removeChild(o)}o.addEventListener('click',function(e){if(e.target===o||e.target.className==='x')close()});document.addEventListener('keydown',function k(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',k)}});document.body.appendChild(o)}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function scrollTo(el){if(!el)return;el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.remove('hl');void el.offsetWidth;el.classList.add('hl')}
+/* search members */
+document.addEventListener('input',function(e){var i=e.target;if(i.tagName!=='INPUT'||!/Search Member/.test(i.getAttribute('aria-label')||''))return;var sec=i.closest('section'),q=i.value.toLowerCase().trim();var grid=$('div[style*="grid-template-columns"]',sec);if(!grid)return;var n=0;[].slice.call(grid.children).forEach(function(c){if(c.getAttribute('data-nf'))return;var ok=!q||txt(c).toLowerCase().indexOf(q)>-1;c.style.display=ok?'':'none';if(ok)n++});var nf=$('[data-nf]',grid);if(!n){if(!nf){nf=document.createElement('div');nf.setAttribute('data-nf','1');nf.style.cssText='grid-column:1/-1;padding:22px;text-align:center;color:#5A6172';nf.textContent='No member found.';grid.appendChild(nf)}nf.style.display=''}else if(nf)nf.style.display='none'});
+/* clicks */
+document.addEventListener('click',function(e){var a=e.target.closest('a');if(!a)return;var t=txt(a),h=a.getAttribute('href')||'';
+ if(/^View All Members/.test(t)){e.preventDefault();var s=$('#members',dsk),i=$('input',s);if(i){i.value='';i.dispatchEvent(new Event('input',{bubbles:true}))}scrollTo(s);return}
+ if(/^View (Full Committee|All Notices|All Projects|Gallery)/.test(t)){e.preventDefault();scrollTo($(h,dsk));return}
+ if(/^View Profile/.test(t)){e.preventDefault();var c=a.parentElement,k=[].slice.call(c.children).map(txt).filter(Boolean);var name=k[1]||k[0],role=k[2]||'';var av=c.children[0],bg=av&&av.style.backgroundImage;modal((bg&&bg!=='none'?'<div style="width:96px;height:96px;border-radius:50%;background:'+bg+' center top/cover;margin-bottom:12px"></div>':'<div style="width:96px;height:96px;border-radius:50%;background:#E3F5EC;color:#0D6446;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;margin-bottom:12px">'+esc(k[0]||'')+'</div>')+'<h3>'+esc(name)+'</h3><div style="color:#12815A;font-weight:700">'+esc(role)+'</div><p>Executive Committee &middot; Riazuddin Bazar Business Development Forum</p>');return}
+ if(/^Read More/.test(t)&&/^(#|#top|#notices)$/.test(h)){e.preventDefault();var c=a.parentElement;var parts=[].slice.call(c.children).filter(function(x){return x!==a}).map(txt).filter(Boolean);if(parts.length<2&&c.parentElement)parts=[].slice.call(c.parentElement.children).filter(function(x){return x!==a&&!x.contains(a)}).map(txt).filter(Boolean).concat(parts);var date=parts.filter(function(p){return/\d{4}/.test(p)&&p.length<40})[0]||'';var rest=parts.filter(function(p){return p!==date});var title=rest[rest.length>2?0:0]||'';modal((date?'<div style="font-size:13px;color:#5A6172;margin-bottom:6px">'+esc(date)+'</div>':'')+'<h3>'+esc(title)+'</h3>'+rest.slice(1).map(function(r){return'<p>'+esc(r)+'</p>'}).join('')+'<p style="font-size:13.5px;color:#5A6172">Full notices and statements are available after <a href="https://member.rbdf.org" style="color:#12815A;font-weight:600">Member Login</a>.</p>');return}
+ if(/^Learn More/.test(t)&&h==='#'){e.preventDefault();scrollTo(mAbout);return}
+},true);
+/* contact form */
+var btn=$$('button',dsk).filter(function(b){return txt(b)==='Send Message'})[0];
+if(btn){btn.addEventListener('click',function(){var box=btn.parentElement,f=$$('input,textarea',box).filter(function(x){return!x.closest('label')||true});var v=f.map(function(x){return x.value.trim()});var m=$('div.rb-ok',box);if(m)m.parentNode.removeChild(m);m=document.createElement('div');m.className='rb-ok';var bad=!v[0]||!v[1]||!v[3]||!v[4];if(!bad&&!/^01\d{9}$/.test(v[1].replace(/[\s-]/g,''))){bad='mobile'}
+ if(bad){m.className+=' rb-er';m.textContent=bad==='mobile'?'Please enter a valid 11-digit mobile number (01XXXXXXXXX).':'Please fill in Name, Mobile, Subject and Message.';btn.parentNode.insertBefore(m,btn.nextSibling);return}
+ var msg='Name: '+v[0]+'\nMobile: '+v[1]+(v[2]?'\nEmail: '+v[2]:'')+'\nSubject: '+v[3]+'\n\n'+v[4];m.textContent='Opening WhatsApp to send your message to the Forum office...';btn.parentNode.insertBefore(m,btn.nextSibling);window.open('https://wa.me/8801324884488?text='+encodeURIComponent(msg),'_blank')})}
+})();</script>
 </body></html>
