@@ -65,8 +65,8 @@ function shell(u, active, body, msg) {
   const adm = u.is_admin;
   const tabs = [['/', 'Home'], ['/payments', 'Payments'], ['/notices', 'Notices'], ['/password', 'Password']];
   const atabs = [['/admin', 'Dashboard'], ['/admin/members', 'Members'], ['/admin/payments', 'Payments'], ['/admin/notices', 'Notices']];
-  const set = (adm && active.startsWith('/admin')) ? atabs : tabs;
-  return page('Portal', `<header class="top"><div class="wrap"><img src="https://rbdf.org/logo.png" alt="RBF" style="height:38px"><nav style="flex:1;display:flex;flex-wrap:wrap;gap:4px">${set.map(([h, l]) => `<a href="${h}" class="${active === h ? 'on' : ''}">${l}</a>`).join('')}${adm ? (active.startsWith('/admin') ? '<a href="/">My Portal</a>' : '<a href="/admin">Admin</a>') : ''}</nav><span class="mut">${e(u.name_en)} · ${e(u.id)}</span><form method="post" action="/logout"><button class="btn o s">Logout</button></form></div></header><main class="wrap" style="padding:26px 20px 60px">${msg ? `<div class="msg ${msg.startsWith('!') ? 'err' : ''}">${e(msg.replace(/^!/, ''))}</div>` : ''}${body}</main>`);
+  const set = (adm && (active.startsWith('/admin') || u.id === 'admin')) ? (u.id === 'admin' ? atabs.concat([['/password', 'Password']]) : atabs) : tabs;
+  return page('Portal', `<header class="top"><div class="wrap"><img src="https://rbdf.org/logo.png" alt="RBF" style="height:38px"><nav style="flex:1;display:flex;flex-wrap:wrap;gap:4px">${set.map(([h, l]) => `<a href="${h}" class="${active === h ? 'on' : ''}">${l}</a>`).join('')}${adm && u.id !== 'admin' ? (active.startsWith('/admin') ? '<a href="/">My Portal</a>' : '<a href="/admin">Admin</a>') : ''}</nav><span class="mut">${e(u.name_en)} · ${e(u.id)}</span><form method="post" action="/logout"><button class="btn o s">Logout</button></form></div></header><main class="wrap" style="padding:26px 20px 60px">${msg ? `<div class="msg ${msg.startsWith('!') ? 'err' : ''}">${e(msg.replace(/^!/, ''))}</div>` : ''}${body}</main>`);
 }
 
 // ---- request plumbing
@@ -103,6 +103,7 @@ async function memberApp(req, res, url) {
   const back = (to, m) => redirect(res, to + '?m=' + flash(m));
 
   // ---- member pages
+  if (p === '/' && u.id === 'admin') return redirect(res, '/admin');
   if (p === '/') {
     const mine = q('SELECT * FROM payments WHERE member_id=? AND status=? ORDER BY seq DESC', u.id, 'valid');
     const paid = mine.reduce((s, x) => s + x.amount, 0);
