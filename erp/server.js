@@ -282,6 +282,78 @@ function dueState(mid) {
   return { open: out, total: out.reduce((s, x) => s + x.left, 0), advance: credit };
 }
 function allDue() { return q("SELECT id FROM members WHERE id!='admin' AND status='active' ORDER BY seq").map(m => ({ id: m.id, ...dueState(m.id) })); }
+// ---- due notice: signed public page (A4, save as PDF) + tidy WhatsApp text
+const BN = '০১২৩৪৫৬৭৮৯', bn = s => String(s).replace(/\d/g, d => BN[d]);
+const bdNum = n => { let s = String(Math.round(Number(n) || 0)); if (s.length <= 3) return bn(s); const t = s.slice(-3); let r = s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ','); return bn(r + ',' + t); };
+const BNK = { 'one-time investment': 'এককালীন বিনিয়োগ', 'admission fee': 'ভর্তি ফি', 'admission': 'ভর্তি ফি', 'share': 'শেয়ার', 'fine': 'জরিমানা', 'donation': 'অনুদান' };
+const BNM = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+const bnMonth = ym0 => { const m = /^(\d{4})-(\d{2})/.exec(ym0 || ''); return m ? BNM[parseInt(m[2]) - 1] + ' ' + bn(m[1]) : ''; };
+const bnDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ''); return m ? bn(parseInt(m[3])) + ' ' + BNM[parseInt(m[2]) - 1] + ' ' + bn(m[1]) : (d || ''); };
+const dueSig = id => sign('due|' + id).slice(0, 16);
+const dueUrl = id => `https://verify.rbdf.org/due/${id}/${dueSig(id)}`;
+const dueLabel = d => { const m = /\((\d{4}-\d{2})\)/.exec(d.descr || ''); return m ? 'মাসিক চাঁদা — ' + bnMonth(m[1]) : (BNK[String(d.descr || '').trim().toLowerCase()] || String(d.descr || d.kind || 'বকেয়া')); };
+const dueLast = () => bnDate(ym(today()) + '-' + String(Math.min(28, cfg().due_day || 10)).padStart(2, '0'));
+function waDueVars(m) {
+  const ds = dueState(m.id), list = ds.open.map(d => `▫️ ${dueLabel(d)} — ৳ ${bdNum(d.left)}`).join('\n') || '▫️ কোনো বকেয়া নেই';
+  return { name: m.name_bn || m.name_en, member_id: m.id, due: bdNum(ds.total), date: bnDate(today()), month: bnMonth(ym(today())), last: dueLast(), list, link: dueUrl(m.id) };
+}
+const waFill = (t, v) => String(t).replace(/{(\w+)}/g, (x, k) => (k in v ? v[k] : x));
+const WA_DUE_DEFAULT = `আসসালামু আলাইকুম, জনাব *{name}* 🌿
+
+*ব্যবসা উন্নয়ন ফোরাম*
+📋 *বকেয়া নোটিশ — {month}*
+🆔 সদস্য নং: {member_id}
+
+━━━━━━━━━━━━━━
+{list}
+━━━━━━━━━━━━━━
+💰 *মোট বকেয়া: ৳ {due}*
+⏰ জমার শেষ তারিখ: {last}
+
+🏦 *জমা দেওয়ার মাধ্যম*
+Mutual Trust Bank PLC, EPZ Branch
+A/C: 1311004670665
+(বিকাশ/নগদে দিলে ট্রানজেকশন আইডি জানাবেন)
+
+📄 *বিস্তারিত নোটিশ (পিডিএফ করে রাখতে পারবেন):*
+{link}
+
+ইতিমধ্যে পরিশোধ করে থাকলে এই বার্তা উপেক্ষা করবেন। ধন্যবাদ। 🙏
+— ব্যবসা উন্নয়ন ফোরাম
+📞 ০১৩২৪৮৮৪৪৮৮`;
+function dueNoticePage(m) {
+  const ds = dueState(m.id), link = dueUrl(m.id);
+  const rows = ds.open.map((d, i) => `<tr><td>${bn(i + 1)}</td><td>${e(dueLabel(d))}<div class="s">${e(d.ref || '')}</div></td><td>${e(bnDate(d.due_date || d.date))}</td><td class="r">${d.days > 0 ? bn(d.days) + ' দিন' : '–'}</td><td class="r b">৳ ${bdNum(d.left)}</td></tr>`).join('');
+  const body = ds.total > 0
+    ? `<table><thead><tr><th>#</th><th>বিবরণ</th><th>জমার তারিখ</th><th class="r">বিলম্ব</th><th class="r">বকেয়া</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="4" class="r">মোট বকেয়া</td><td class="r">৳ ${bdNum(ds.total)}</td></tr></tfoot></table>`
+    : `<div class="ok">✅ আপনার কোনো বকেয়া নেই। আপনার সহযোগিতার জন্য ধন্যবাদ।</div>`;
+  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>বকেয়া নোটিশ — ${e(m.id)}</title><meta property="og:title" content="বকেয়া নোটিশ — ব্যবসা উন্নয়ন ফোরাম"><meta property="og:description" content="সদস্য নং ${e(m.id)} · বিস্তারিত নোটিশ ও জমা দেওয়ার তথ্য"><meta property="og:image" content="https://rbdf.org/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#EEF1F5;font-family:'Hind Siliguri',Inter,Arial,sans-serif;color:#2B3445;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bar{max-width:794px;margin:14px auto 0;padding:0 12px;display:flex;gap:10px;flex-wrap:wrap}.bar button,.bar a{background:#12815A;color:#fff;border:0;border-radius:10px;padding:11px 18px;font:600 15px 'Hind Siliguri',sans-serif;cursor:pointer;text-decoration:none}.bar a{background:#2B3445}
+.pg{max-width:794px;margin:12px auto 24px;background:#fff;border:1px solid #D7DCE4;border-radius:12px;overflow:hidden}
+.hd{display:flex;align-items:center;gap:16px;padding:20px 26px 14px;background:linear-gradient(135deg,#fff 70%,#E8F6EE)}.hd img{height:62px;max-width:40%;object-fit:contain}.hd .t{flex:1;border-left:3px solid #12815A;padding-left:14px}.hd .t b{display:block;font-size:19px;line-height:1.35}.hd .t span{font-size:12px;color:#4A5468;line-height:1.5}
+.tt{margin:26px 0 8px;border-top:3px solid #12815A;position:relative;height:0;text-align:center}.tt span{position:absolute;left:50%;top:-23px;transform:translateX(-50%);background:#2B3445;color:#fff;font-weight:700;font-size:21px;padding:8px 40px;white-space:nowrap;clip-path:polygon(6% 0,94% 0,100% 100%,0 100%)}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;margin:34px 26px 14px;font-size:14.5px}.mt div{border-bottom:1px dashed #9AA2B2;padding:4px 2px}.mt b{color:#12815A;font-weight:600;margin-right:6px}
+table{width:calc(100% - 52px);margin:0 26px;border-collapse:collapse;font-size:14.5px}th{background:#12815A;color:#fff;text-align:left;padding:9px 10px;font-weight:600}td{padding:9px 10px;border-bottom:1px solid #E1E5EB;vertical-align:top}.r{text-align:right}.b{font-weight:700}.s{font-size:11px;color:#8A93A6}
+tfoot td{background:#EAF7F0;font-weight:700;font-size:16px;color:#0D6446;border-bottom:0}
+.ok{margin:10px 26px;padding:18px;border-radius:10px;background:#EAF7F0;color:#0D6446;font-weight:600;text-align:center}
+.pay{margin:18px 26px 8px;border:1px solid #86C9A8;border-radius:10px;padding:12px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.pay h4{margin:0 0 6px;font-size:15px;color:#12815A}.pay div{font-size:13.5px;line-height:1.75}.pay img{display:block}
+.nt{margin:6px 26px 18px;font-size:12.5px;color:#4A5468;line-height:1.7}
+.ft{background:#2B3445;color:#fff;display:flex;justify-content:space-around;gap:10px;padding:13px;font-size:13px;border-top:5px solid #12815A;flex-wrap:wrap}
+@media(max-width:640px){.hd img{max-width:55%}.hd{flex-wrap:wrap}.tt span{font-size:17px;padding:7px 24px}.mt{grid-template-columns:1fr}.pay{grid-template-columns:1fr}table{font-size:13px}th,td{padding:7px 6px}}
+@media print{@page{size:A4;margin:10mm}body{background:#fff}.bar{display:none}.pg{border:0;border-radius:0;margin:0;max-width:none}}
+</style></head><body>
+<div class="bar"><button onclick="print()">📄 পিডিএফ ডাউনলোড / প্রিন্ট</button><a href="tel:01324884488">📞 যোগাযোগ</a></div>
+<div class="pg"><div class="hd"><img src="https://rbdf.org/logo.png" alt=""><div class="t"><b>রিয়াজউদ্দিন বাজার ব্যবসা উন্নয়ন ফোরাম</b><span>দোকান নং ৩, ২য় তলা, এস এস টাওয়ার, গোটহাট, ১৯ সেন্ট্রাল রোড, কোতোয়ালি, চট্টগ্রাম</span></div></div>
+<div class="tt"><span>বকেয়া নোটিশ · DUE NOTICE</span></div>
+<div class="mt"><div><b>নোটিশের তারিখ:</b>${e(bnDate(today()))}</div><div><b>সদস্য নং:</b>${e(m.id)}</div><div><b>সদস্যের নাম:</b>${e(m.name_bn || m.name_en)}</div><div><b>মোবাইল:</b>${e(bn(m.mobile || ''))}</div></div>
+${body}
+<div class="pay"><div><h4>🏦 জমা দেওয়ার তথ্য</h4>Mutual Trust Bank PLC · EPZ Branch (0060)<br>Account No: <b>1311004670665</b> · Routing: 145270816<br>Account Name: Mohammed Faruk - Mohammed Minhaz Uddin - Rabiul Hosen<br>বিকাশ / নগদ / রকেটে জমা দিলে ট্রানজেকশন আইডি জানাবেন।</div><div style="text-align:center">${qr(link)}<div style="font-size:10px;color:#8A93A6">এই নোটিশ খুলুন</div></div></div>
+<div class="nt">জমা দেওয়ার পর ব্যাংক স্লিপ বা ট্রানজেকশন আইডি ফোরাম অফিসে জানাবেন; যাচাইয়ের পর মানি রিসিপ্ট দেওয়া হবে। ইতিমধ্যে পরিশোধ করে থাকলে এই নোটিশ উপেক্ষা করুন।</div>
+<div class="ft"><span>📍 রিয়াজউদ্দিন বাজার, কোতোয়ালি, চট্টগ্রাম</span><span>📞 ০১৩২৪৮৮৪৪৮৮</span><span>rbdf.org</span></div></div></body></html>`;
+}
 // SMS / integrations
 const enc = s => { const iv = crypto.randomBytes(12), k = crypto.createHash('sha256').update(secret).digest(); const c = crypto.createCipheriv('aes-256-gcm', k, iv); const x = Buffer.concat([c.update(String(s), 'utf8'), c.final()]); return [iv, c.getAuthTag(), x].map(b => b.toString('base64')).join('.'); };
 const dec = s => { try { const [iv, tag, x] = s.split('.').map(b => Buffer.from(b, 'base64')); const k = crypto.createHash('sha256').update(secret).digest(); const d = crypto.createDecipheriv('aes-256-gcm', k, iv); d.setAuthTag(tag); return Buffer.concat([d.update(x), d.final()]).toString('utf8'); } catch { return ''; } };
@@ -728,14 +800,19 @@ ${tbl(['#', 'Due date', 'Instalment', 'Paid', 'Balance', 'Status'], ins.map(i =>
   }
   // ----- notices & sms
   if (p === '/admin/whatsapp') {
-    const TPL = [['Due reminder', 'আসসালামু আলাইকুম {name}, রিয়াজউদ্দিন বাজার ব্যবসায়ী উন্নয়ন ফোরামের পক্ষ থেকে জানানো যাচ্ছে, আপনার বকেয়া {due} টাকা। অনুগ্রহ করে পরিশোধ করুন। ধন্যবাদ।'], ['Meeting notice', 'আসসালামু আলাইকুম {name}, ফোরামের মাসিক সভা {date} তারিখে। আপনার উপস্থিতি কামনা করছি।'], ['General notice', 'আসসালামু আলাইকুম {name} ({member_id}), রিয়াজউদ্দিন বাজার ব্যবসায়ী উন্নয়ন ফোরামের নোটিশ: ']];
-    const aud = url.searchParams.get('aud') || 'all', msg = url.searchParams.get('msg') || TPL[0][1];
+    if (POST && act === 'savewa') { const t = String(post.msg || '').trim().slice(0, 2000); if (t) { kvset('wa_msg', t); audit(u, 'Notices', 'WhatsApp standard message saved', '', '', req); go('/admin/whatsapp', 'Saved as the standard monthly message.'); } else go('/admin/whatsapp', '!Message is empty.'); return true; }
+    if (POST && act === 'resetwa') { run("DELETE FROM kv WHERE k='wa_msg'"); go('/admin/whatsapp', 'Standard message reset.'); return true; }
+    const STD = kvget('wa_msg', WA_DUE_DEFAULT);
+    const TPL = [['Due notice (with PDF link)', STD], ['Short reminder', 'আসসালামু আলাইকুম {name}, ব্যবসা উন্নয়ন ফোরামের পক্ষ থেকে জানানো যাচ্ছে, আপনার মোট বকেয়া ৳ {due}। বিস্তারিত নোটিশ: {link} — ধন্যবাদ।'], ['Meeting notice', 'আসসালামু আলাইকুম {name}, ফোরামের মাসিক সভা {date} তারিখে। আপনার উপস্থিতি কামনা করছি।'], ['General notice', 'আসসালামু আলাইকুম {name} ({member_id}), ব্যবসা উন্নয়ন ফোরামের নোটিশ: ']];
+    const aud = url.searchParams.get('aud') || 'all', msg = url.searchParams.get('msg') || STD;
     const all = q("SELECT * FROM members WHERE id!='admin' AND status='active' ORDER BY seq");
     const list = aud === 'due' ? all.filter(m => dueState(m.id).total > 0) : aud === 'exec' ? all.filter(m => /President|Secretary|Treasurer|Executive/i.test(m.role)) : aud === 'advisor' ? all.filter(m => /Advisor/i.test(m.role)) : all;
     const wa = m => { const d = String(m.mobile || '').replace(/\D/g, ''); return d.length === 11 && d.startsWith('01') ? '88' + d : d; };
-    const text = m => msg.replace(/{name}/g, m.name_bn || m.name_en).replace(/{member_id}/g, m.id).replace(/{due}/g, num(dueState(m.id).total)).replace(/{date}/g, fmtD(today()));
-    const rows = list.map(m => [e(m.name_en) + '<div class="mut">' + e(m.id) + '</div>', e(m.mobile), money(dueState(m.id).total), wa(m).length >= 11 ? `<a class="btn s" target="_blank" rel="noopener" href="https://wa.me/${wa(m)}?text=${encodeURIComponent(text(m))}">Open WhatsApp</a>` : '<span class="mut">No valid number</span>']);
-    out('/admin/whatsapp', 'WhatsApp messages', 'No API needed. Each button opens WhatsApp (Business app or WhatsApp Web) with the message ready; press Send there.', `<form class="card grid" style="max-width:760px;margin-bottom:14px"><label>Send to<select name="aud">${[['all', 'All active members'], ['due', 'Members with dues'], ['exec', 'Executive committee'], ['advisor', 'Advisors']].map(([k, l]) => `<option value="${k}" ${aud === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label>Message (use {name} {due} {date} {member_id})<textarea name="msg" rows="4">${e(msg)}</textarea></label><div class="row">${TPL.map(([l, t]) => `<a class="chip" href="?aud=${e(aud)}&msg=${encodeURIComponent(t)}">${e(l)}</a>`).join(' ')}</div><button class="btn">Update list</button></form>${tbl(['Member', 'Mobile', 'Due', ''], rows)}<p class="mut">${list.length} members. Messages open one by one because WhatsApp requires you to press Send for each chat. For automatic sending you would need the WhatsApp Business API, which is not used here.</p>`);
+    const text = m => waFill(msg, waDueVars(m));
+    const rows = list.map(m => [e(m.name_en) + '<div class="mut">' + e(m.id) + '</div>', e(m.mobile), money(dueState(m.id).total), `<a class="btn o s" target="_blank" rel="noopener" href="${dueUrl(m.id)}">Notice PDF</a>`, wa(m).length >= 11 ? `<a class="btn s" target="_blank" rel="noopener" href="https://wa.me/${wa(m)}?text=${encodeURIComponent(text(m))}">Open WhatsApp</a>` : '<span class="mut">No valid number</span>']);
+    const sample = list[0] ? text(list[0]) : '';
+    out('/admin/whatsapp', 'WhatsApp messages', 'No API needed. Each button opens WhatsApp (Business app or WhatsApp Web) with the message ready; press Send there. The message carries a link to that member\'s own Due Notice page, which opens as a neat A4 notice and can be saved as a PDF.', `<form class="card grid" style="max-width:760px;margin-bottom:14px"><label>Send to<select name="aud">${[['due', 'Members with dues'], ['all', 'All active members'], ['exec', 'Executive committee'], ['advisor', 'Advisors']].map(([k, l]) => `<option value="${k}" ${aud === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label>Message (use {name} {member_id} {due} {list} {month} {last} {date} {link})<textarea name="msg" rows="14" style="font-family:inherit">${e(msg)}</textarea></label><div class="row">${TPL.map(([l, t]) => `<a class="chip" href="?aud=${e(aud)}&msg=${encodeURIComponent(t)}">${e(l)}</a>`).join(' ')}</div><button class="btn">Update list &amp; preview</button></form>
+<div class="g2" style="margin-bottom:14px"><div class="card"><b>Preview (first member in the list)</b><pre style="white-space:pre-wrap;font-family:inherit;margin:10px 0 0;background:#E7F6E0;border-radius:12px;padding:12px;font-size:14px;line-height:1.6">${e(sample)}</pre></div><form method="post" class="card grid" style="align-content:start" onsubmit="this.msg.value=document.querySelector('textarea[name=msg][rows]').value">${hid({ act: 'savewa' })}<b>Standard monthly message</b><p class="mut" style="margin:0">Keep this message as the standard text every month. Names, amounts, month and link fill in by themselves.</p><textarea name="msg" style="display:none">${e(msg)}</textarea><button class="btn">Save current text as standard</button></form></div>${tbl(['Member', 'Mobile', 'Due', 'Notice', ''], rows)}<p class="mut">${list.length} members. Messages open one by one because WhatsApp requires you to press Send for each chat. The Due Notice link is private to each member and always shows the latest dues.</p><form method="post" style="margin-top:6px">${hid({ act: 'resetwa' })}<button class="btn o s">Reset standard message to default</button></form>`);
     return true;
   }
   if (p === '/admin/notices') {
@@ -1004,6 +1081,7 @@ http.createServer(async (req, res) => {
     const url = new URL(req.url, 'https://' + host);
     if (req.method === 'POST') { const o = req.headers.origin; if (o && new URL(o).hostname !== host) return send(res, 403, 'Bad origin'); }
     { const pm = /^\/photo\/(RBF-\d{3})\.jpg$/.exec(url.pathname); if (pm) { try { const b = fs.readFileSync(FILES + '/photos/' + pm[1] + '.jpg'); res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' }); return res.end(b); } catch { res.writeHead(404); return res.end(); } } }
+    { const dm = /^\/due\/(RBF-\d{3})\/([\w-]{16})$/.exec(url.pathname); if (dm && !host.startsWith('admin.')) { const mm0 = q1("SELECT * FROM members WHERE id=? AND id!='admin'", dm[1]); const okSig = dm[2] === dueSig(dm[1]); if (!mm0 || !okSig) return send(res, 404, page('Not found', '<div style="padding:40px">Page not found.</div>')); res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(dueNoticePage(mm0)); } }
     if (host === 'verify.rbdf.org') { if (url.searchParams.get('m')) return send(res, 200, verifyMember(url.searchParams.get('m'))); const pp = /^\/receipt\/([\w-]+)$/.exec(url.pathname); return send(res, 200, verifyPage(url.searchParams.get('r') || (pp ? pp[1] : ''))); }
     if (host === 'api.rbdf.org') {
       res.setHeader('Access-Control-Allow-Origin', '*');
