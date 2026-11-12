@@ -300,34 +300,34 @@ async function dueRender(m, kind) {
   let path, payload;
   if (kind === 'pdf') { path = '/pdf'; payload = { html: dueNoticePage(m, true), options: { format: 'A4', printBackground: true, margin: { top: '8mm', bottom: '8mm', left: '8mm', right: '8mm' } }, gotoOptions: go }; }
   else if (kind === 'png') { path = '/screenshot'; payload = { html: dueNoticePage(m, true), options: { type: 'png', fullPage: true }, viewport: { width: 794, height: 1000, deviceScaleFactor: 2 }, gotoOptions: go }; }
-  else { path = '/screenshot'; payload = { html: dueCardHtml(m), options: { type: 'png' }, viewport: { width: 800, height: 800, deviceScaleFactor: 1 }, gotoOptions: go }; }
+  else { path = '/screenshot'; payload = { html: dueCardHtml(m), options: { type: 'jpeg', quality: 88 }, viewport: { width: 1200, height: 630, deviceScaleFactor: 1 }, gotoOptions: go }; }
   const r = await fetch(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(25000) });
   if (!r.ok) throw new Error(kind + ' ' + r.status);
   const buf = Buffer.from(await r.arrayBuffer());
-  const magic = kind === 'pdf' ? '%PDF' : '\x89PNG';
-  if (buf.length < 1000 || buf.slice(0, 4).toString('latin1') !== magic) throw new Error('bad ' + kind);
+  const magic = kind === 'pdf' ? '%PDF' : kind === 'png' ? '\x89PNG' : '\xff\xd8\xff';
+  if (buf.length < 1000 || buf.slice(0, magic.length).toString('latin1') !== magic) throw new Error('bad ' + kind);
   if (pdfCache.size > 300) pdfCache.clear();
   pdfCache.set(key, buf); return buf;
 }
 function dueCardHtml(m) {
-  const ds = dueState(m.id);
-  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet"><style>
-*{box-sizing:border-box;margin:0}body{width:800px;height:800px;font-family:'Hind Siliguri',Arial,sans-serif;color:#2B3445;background:linear-gradient(160deg,#fff 50%,#E8F6EE);text-align:center;position:relative;overflow:hidden}
-.lg{padding-top:46px}.lg img{height:104px;max-width:86%;object-fit:contain}
-.tag{display:inline-block;margin-top:30px;background:#2B3445;color:#fff;font-size:50px;font-weight:700;padding:8px 54px;border-radius:14px}
-.box{margin:34px 60px 0;background:#12815A;color:#fff;border-radius:34px;padding:26px 20px 30px}.box small{font-size:40px;display:block;opacity:.95}.box b{display:block;font-size:112px;line-height:1.2;white-space:nowrap}
-.nm{margin-top:30px;font-size:52px;font-weight:700}.sub{font-size:36px;color:#4A5468;margin-top:4px}
-.ft{position:absolute;left:0;right:0;bottom:0;background:#2B3445;border-top:8px solid #12815A;color:#fff;font-size:34px;padding:16px}
-</style></head><body><div class="lg"><img src="https://rbdf.org/logo.png" alt=""></div><div class="tag">বকেয়া নোটিশ</div>
-<div class="box"><small>মোট বকেয়া</small><b>৳ ${bdNum(ds.total)}</b></div>
-<div class="nm">${e(m.name_bn || m.name_en)}</div><div class="sub">সদস্য নং ${e(m.id)} · ${e(bnMonth(ym(today())))}</div>
-<div class="ft">শেষ তারিখ ${e(dueLast())}</div></body></html>`;
+  const ds = dueState(m.id), items = ds.open.slice(0, 3).map(d => `<div class="i"><span>${e(dueLabel(d))}</span><b>৳ ${bdNum(d.left)}</b></div>`).join('') + (ds.open.length > 3 ? `<div class="i"><span>আরও ${bn(ds.open.length - 3)}টি</span><b></b></div>` : '');
+  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+*{box-sizing:border-box;margin:0}body{width:1200px;height:630px;font-family:'Hind Siliguri',Arial,sans-serif;color:#2B3445;background:linear-gradient(135deg,#fff 55%,#E8F6EE);position:relative;overflow:hidden}
+.top{display:flex;align-items:center;gap:26px;padding:34px 54px 0}.top img{height:92px}.top div{border-left:5px solid #12815A;padding-left:22px;font-size:34px;font-weight:700;line-height:1.3}
+.tag{position:absolute;right:54px;top:44px;background:#2B3445;color:#fff;font-size:30px;font-weight:700;padding:10px 34px;border-radius:10px}
+.mid{display:flex;gap:40px;padding:30px 54px 0;align-items:stretch}.l{flex:1}.nm{font-size:42px;font-weight:700}.sub{font-size:26px;color:#4A5468;margin:4px 0 18px}
+.i{display:flex;justify-content:space-between;font-size:28px;padding:9px 0;border-bottom:2px dashed #B9C0CC}.i b{color:#0D6446}
+.tot{width:380px;background:#12815A;color:#fff;border-radius:22px;padding:28px;text-align:center;display:flex;flex-direction:column;justify-content:center}.tot small{font-size:28px;opacity:.9}.tot b{font-size:54px;line-height:1.25;display:block;margin-top:6px;white-space:nowrap}
+.ft{position:absolute;left:0;right:0;bottom:0;background:#2B3445;color:#fff;border-top:6px solid #12815A;padding:16px 54px;font-size:26px;display:flex;justify-content:space-between}
+</style></head><body><div class="top"><img src="https://rbdf.org/logo.png" alt=""></div><div class="tag">বকেয়া নোটিশ</div>
+<div class="mid"><div class="l"><div class="nm">${e(m.name_bn || m.name_en)}</div><div class="sub">সদস্য নং ${e(m.id)} · ${e(bnMonth(ym(today())))}</div>${items || '<div class="i"><span>কোনো বকেয়া নেই</span><b></b></div>'}</div><div class="tot"><small>মোট বকেয়া</small><b>৳ ${bdNum(ds.total)}</b><small style="margin-top:8px">শেষ তারিখ ${e(dueLast())}</small></div></div>
+<div class="ft"><span>বিস্তারিত নোটিশ ও জমার তথ্য লিংকে</span><span>০১৩২৪৮৮৪৪৮৮</span></div></body></html>`;
 }
 const dueLabel = d => { const m = /\((\d{4}-\d{2})\)/.exec(d.descr || ''); return m ? 'মাসিক চাঁদা — ' + bnMonth(m[1]) : (BNK[String(d.descr || '').trim().toLowerCase()] || String(d.descr || d.kind || 'বকেয়া')); };
 const dueLast = () => bnDate(ym(today()) + '-' + String(Math.min(28, cfg().due_day || 10)).padStart(2, '0'));
 function waDueVars(m) {
   const ds = dueState(m.id), list = ds.open.map(d => `• ${dueLabel(d)} — ৳ ${bdNum(d.left)}`).join('\n') || '• কোনো বকেয়া নেই';
-  return { name: m.name_bn || m.name_en, member_id: m.id, due: bdNum(ds.total), date: bnDate(today()), month: bnMonth(ym(today())), last: dueLast(), list, link: dueUrl(m.id) };
+  return { name: m.name_bn || m.name_en, member_id: m.id, due: bdNum(ds.total), date: bnDate(today()), month: bnMonth(ym(today())), last: dueLast(), list, link: dueUrl(m.id) + '?m=' + ym(today()) };
 }
 const waFill = (t, v) => String(t).replace(/{(\w+)}/g, (x, k) => (k in v ? v[k] : x));
 const WA_DUE_DEFAULT = `আসসালামু আলাইকুম, জনাব *{name}*
@@ -359,7 +359,7 @@ function dueNoticePage(m, forPdf) {
   const body = ds.total > 0
     ? `<table><thead><tr><th>#</th><th>বিবরণ</th><th>জমার তারিখ</th><th class="r">বিলম্ব</th><th class="r">বকেয়া</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="4" class="r">মোট বকেয়া</td><td class="r">৳ ${bdNum(ds.total)}</td></tr></tfoot></table>`
     : `<div class="ok">✅ আপনার কোনো বকেয়া নেই। আপনার সহযোগিতার জন্য ধন্যবাদ।</div>`;
-  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>বকেয়া নোটিশ — ${e(m.id)}</title><meta property="og:title" content="বকেয়া নোটিশ — ব্যবসা উন্নয়ন ফোরাম"><meta property="og:description" content="সদস্য নং ${e(m.id)} · বিস্তারিত নোটিশ ও জমা দেওয়ার তথ্য"><meta property="og:image" content="${link}.card.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="800"><meta property="og:image:height" content="800"><meta name="twitter:card" content="summary"><link rel="icon" href="https://member.rbdf.org/icon-192.png">
+  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>বকেয়া নোটিশ — ${e(m.id)}</title><meta property="og:title" content="বকেয়া নোটিশ — ব্যবসা উন্নয়ন ফোরাম"><meta property="og:description" content="সদস্য নং ${e(m.id)} · বিস্তারিত নোটিশ ও জমা দেওয়ার তথ্য"><meta property="og:type" content="website"><meta property="og:site_name" content="ব্যবসা উন্নয়ন ফোরাম"><meta property="og:url" content="${link}"><meta property="og:image" content="${link}.card.jpg?v=3"><meta property="og:image:secure_url" content="${link}.card.jpg?v=3"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="বকেয়া নোটিশ"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="${link}.card.jpg?v=3"><link rel="icon" href="https://member.rbdf.org/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#EEF1F5;font-family:'Hind Siliguri',Inter,Arial,sans-serif;color:#2B3445;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -1114,7 +1114,7 @@ http.createServer(async (req, res) => {
     const url = new URL(req.url, 'https://' + host);
     if (req.method === 'POST') { const o = req.headers.origin; if (o && new URL(o).hostname !== host) return send(res, 403, 'Bad origin'); }
     { const pm = /^\/photo\/(RBF-\d{3})\.jpg$/.exec(url.pathname); if (pm) { try { const b = fs.readFileSync(FILES + '/photos/' + pm[1] + '.jpg'); res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' }); return res.end(b); } catch { res.writeHead(404); return res.end(); } } }
-    { const dm = /^\/due\/(RBF-\d{3})\/([\w-]{16})(\.pdf|\.png|\.card\.png)?$/.exec(url.pathname); if (dm && !host.startsWith('admin.')) { const mm0 = q1("SELECT * FROM members WHERE id=? AND id!='admin'", dm[1]); const okSig = dm[2] === dueSig(dm[1]); if (!mm0 || !okSig) return send(res, 404, page('Not found', '<div style="padding:40px">Page not found.</div>')); if (dm[3]) { const kind = dm[3] === '.pdf' ? 'pdf' : dm[3] === '.png' ? 'png' : 'card'; try { const pb = await dueRender(mm0, kind); const ct = kind === 'pdf' ? 'application/pdf' : 'image/png'; res.writeHead(200, { 'Content-Type': ct, 'Content-Disposition': 'inline; filename="Due-Notice-' + mm0.id + (kind === 'pdf' ? '.pdf' : '.png') + '"', 'Content-Length': pb.length, 'Cache-Control': kind === 'card' ? 'public, max-age=300' : 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(pb); } catch (er) { console.error('due render', er.message); return redirect(res, dueUrl(mm0.id)); } } res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(dueNoticePage(mm0)); } }
+    { const dm = /^\/due\/(RBF-\d{3})\/([\w-]{16})(\.pdf|\.png|\.card\.jpg)?$/.exec(url.pathname); if (dm && !host.startsWith('admin.')) { const mm0 = q1("SELECT * FROM members WHERE id=? AND id!='admin'", dm[1]); const okSig = dm[2] === dueSig(dm[1]); if (!mm0 || !okSig) return send(res, 404, page('Not found', '<div style="padding:40px">Page not found.</div>')); if (dm[3]) { const kind = dm[3] === '.pdf' ? 'pdf' : dm[3] === '.png' ? 'png' : 'card'; try { const pb = await dueRender(mm0, kind); const ct = kind === 'pdf' ? 'application/pdf' : kind === 'card' ? 'image/jpeg' : 'image/png'; res.writeHead(200, { 'Content-Type': ct, 'Content-Disposition': 'inline; filename="Due-Notice-' + mm0.id + (kind === 'pdf' ? '.pdf' : kind === 'card' ? '.jpg' : '.png') + '"', 'Content-Length': pb.length, 'Cache-Control': kind === 'card' ? 'public, max-age=300' : 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(pb); } catch (er) { console.error('due render', er.message); return redirect(res, dueUrl(mm0.id)); } } res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(dueNoticePage(mm0)); } }
     if (host === 'verify.rbdf.org') { if (url.searchParams.get('m')) return send(res, 200, verifyMember(url.searchParams.get('m'))); const pp = /^\/receipt\/([\w-]+)$/.exec(url.pathname); return send(res, 200, verifyPage(url.searchParams.get('r') || (pp ? pp[1] : ''))); }
     if (host === 'api.rbdf.org') {
       res.setHeader('Access-Control-Allow-Origin', '*');
