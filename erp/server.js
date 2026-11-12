@@ -294,33 +294,33 @@ const dueUrl = id => `https://verify.rbdf.org/due/${id}/${dueSig(id)}`;
 const dueLabel = d => { const m = /\((\d{4}-\d{2})\)/.exec(d.descr || ''); return m ? 'মাসিক চাঁদা — ' + bnMonth(m[1]) : (BNK[String(d.descr || '').trim().toLowerCase()] || String(d.descr || d.kind || 'বকেয়া')); };
 const dueLast = () => bnDate(ym(today()) + '-' + String(Math.min(28, cfg().due_day || 10)).padStart(2, '0'));
 function waDueVars(m) {
-  const ds = dueState(m.id), list = ds.open.map(d => `▫️ ${dueLabel(d)} — ৳ ${bdNum(d.left)}`).join('\n') || '▫️ কোনো বকেয়া নেই';
+  const ds = dueState(m.id), list = ds.open.map(d => `• ${dueLabel(d)} — ৳ ${bdNum(d.left)}`).join('\n') || '• কোনো বকেয়া নেই';
   return { name: m.name_bn || m.name_en, member_id: m.id, due: bdNum(ds.total), date: bnDate(today()), month: bnMonth(ym(today())), last: dueLast(), list, link: dueUrl(m.id) };
 }
 const waFill = (t, v) => String(t).replace(/{(\w+)}/g, (x, k) => (k in v ? v[k] : x));
-const WA_DUE_DEFAULT = `আসসালামু আলাইকুম, জনাব *{name}* 🌿
+const WA_DUE_DEFAULT = `আসসালামু আলাইকুম, জনাব *{name}*
 
 *ব্যবসা উন্নয়ন ফোরাম*
-📋 *বকেয়া নোটিশ — {month}*
-🆔 সদস্য নং: {member_id}
+*বকেয়া নোটিশ — {month}*
+সদস্য নং: {member_id}
 
-━━━━━━━━━━━━━━
+--------------------------------
 {list}
-━━━━━━━━━━━━━━
-💰 *মোট বকেয়া: ৳ {due}*
-⏰ জমার শেষ তারিখ: {last}
+--------------------------------
+*মোট বকেয়া: ৳ {due}*
+জমার শেষ তারিখ: {last}
 
-🏦 *জমা দেওয়ার মাধ্যম*
+*জমা দেওয়ার মাধ্যম*
 Mutual Trust Bank PLC, EPZ Branch
 A/C: 1311004670665
 (বিকাশ/নগদে দিলে ট্রানজেকশন আইডি জানাবেন)
 
-📄 *বিস্তারিত নোটিশ (পিডিএফ করে রাখতে পারবেন):*
+*বিস্তারিত নোটিশ (পিডিএফ করে রাখতে পারবেন):*
 {link}
 
-ইতিমধ্যে পরিশোধ করে থাকলে এই বার্তা উপেক্ষা করবেন। ধন্যবাদ। 🙏
+ইতিমধ্যে পরিশোধ করে থাকলে এই বার্তা উপেক্ষা করবেন। ধন্যবাদ।
 — ব্যবসা উন্নয়ন ফোরাম
-📞 ০১৩২৪৮৮৪৪৮৮`;
+ফোন: ০১৩২৪৮৮৪৪৮৮`;
 function dueNoticePage(m) {
   const ds = dueState(m.id), link = dueUrl(m.id);
   const rows = ds.open.map((d, i) => `<tr><td>${bn(i + 1)}</td><td>${e(dueLabel(d))}<div class="s">${e(d.ref || '')}</div></td><td>${e(bnDate(d.due_date || d.date))}</td><td class="r">${d.days > 0 ? bn(d.days) + ' দিন' : '–'}</td><td class="r b">৳ ${bdNum(d.left)}</td></tr>`).join('');
