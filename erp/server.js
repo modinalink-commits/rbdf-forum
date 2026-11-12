@@ -317,9 +317,9 @@ function dueCardHtml(m) {
 .tag{position:absolute;right:54px;top:44px;background:#2B3445;color:#fff;font-size:30px;font-weight:700;padding:10px 34px;border-radius:10px}
 .mid{display:flex;gap:40px;padding:30px 54px 0;align-items:stretch}.l{flex:1}.nm{font-size:42px;font-weight:700}.sub{font-size:26px;color:#4A5468;margin:4px 0 18px}
 .i{display:flex;justify-content:space-between;font-size:28px;padding:9px 0;border-bottom:2px dashed #B9C0CC}.i b{color:#0D6446}
-.tot{width:360px;background:#12815A;color:#fff;border-radius:22px;padding:28px;text-align:center;display:flex;flex-direction:column;justify-content:center}.tot small{font-size:28px;opacity:.9}.tot b{font-size:64px;line-height:1.2;display:block;margin-top:6px}
+.tot{width:380px;background:#12815A;color:#fff;border-radius:22px;padding:28px;text-align:center;display:flex;flex-direction:column;justify-content:center}.tot small{font-size:28px;opacity:.9}.tot b{font-size:54px;line-height:1.25;display:block;margin-top:6px;white-space:nowrap}
 .ft{position:absolute;left:0;right:0;bottom:0;background:#2B3445;color:#fff;border-top:6px solid #12815A;padding:16px 54px;font-size:26px;display:flex;justify-content:space-between}
-</style></head><body><div class="top"><img src="https://rbdf.org/logo.png" alt=""><div>ব্যবসা উন্নয়ন ফোরাম</div></div><div class="tag">বকেয়া নোটিশ</div>
+</style></head><body><div class="top"><img src="https://rbdf.org/logo.png" alt=""></div><div class="tag">বকেয়া নোটিশ</div>
 <div class="mid"><div class="l"><div class="nm">${e(m.name_bn || m.name_en)}</div><div class="sub">সদস্য নং ${e(m.id)} · ${e(bnMonth(ym(today())))}</div>${items || '<div class="i"><span>কোনো বকেয়া নেই</span><b></b></div>'}</div><div class="tot"><small>মোট বকেয়া</small><b>৳ ${bdNum(ds.total)}</b><small style="margin-top:8px">শেষ তারিখ ${e(dueLast())}</small></div></div>
 <div class="ft"><span>বিস্তারিত নোটিশ ও জমার তথ্য লিংকে</span><span>০১৩২৪৮৮৪৪৮৮</span></div></body></html>`;
 }
