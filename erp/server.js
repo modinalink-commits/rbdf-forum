@@ -291,11 +291,23 @@ const bnMonth = ym0 => { const m = /^(\d{4})-(\d{2})/.exec(ym0 || ''); return m 
 const bnDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(d || ''); return m ? bn(parseInt(m[3])) + ' ' + BNM[parseInt(m[2]) - 1] + ' ' + bn(m[1]) : (d || ''); };
 const dueSig = id => sign('due|' + id).slice(0, 16);
 const dueUrl = id => `https://verify.rbdf.org/due/${id}/${dueSig(id)}`;
+const duePdfUrl = id => dueUrl(id) + '.pdf';
+const pdfCache = new Map();
+async function dueNoticePdf(m) {
+  const ds = dueState(m.id), key = m.id + '|' + ds.total + '|' + ds.open.length + '|' + today(), hit = pdfCache.get(key);
+  if (hit) return hit;
+  const r = await fetch((process.env.PDF_URL || 'http://pdf:3000') + '/pdf', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ html: dueNoticePage(m, true), options: { format: 'A4', printBackground: true, margin: { top: '8mm', bottom: '8mm', left: '8mm', right: '8mm' } }, gotoOptions: { waitUntil: 'networkidle0', timeout: 15000 } }), signal: AbortSignal.timeout(25000) });
+  if (!r.ok) throw new Error('pdf ' + r.status);
+  const buf = Buffer.from(await r.arrayBuffer());
+  if (buf.length < 1000 || buf.slice(0, 4).toString() !== '%PDF') throw new Error('bad pdf');
+  if (pdfCache.size > 200) pdfCache.clear();
+  pdfCache.set(key, buf); return buf;
+}
 const dueLabel = d => { const m = /\((\d{4}-\d{2})\)/.exec(d.descr || ''); return m ? 'মাসিক চাঁদা — ' + bnMonth(m[1]) : (BNK[String(d.descr || '').trim().toLowerCase()] || String(d.descr || d.kind || 'বকেয়া')); };
 const dueLast = () => bnDate(ym(today()) + '-' + String(Math.min(28, cfg().due_day || 10)).padStart(2, '0'));
 function waDueVars(m) {
   const ds = dueState(m.id), list = ds.open.map(d => `• ${dueLabel(d)} — ৳ ${bdNum(d.left)}`).join('\n') || '• কোনো বকেয়া নেই';
-  return { name: m.name_bn || m.name_en, member_id: m.id, due: bdNum(ds.total), date: bnDate(today()), month: bnMonth(ym(today())), last: dueLast(), list, link: dueUrl(m.id) };
+  return { name: m.name_bn || m.name_en, member_id: m.id, due: bdNum(ds.total), date: bnDate(today()), month: bnMonth(ym(today())), last: dueLast(), list, link: duePdfUrl(m.id) };
 }
 const waFill = (t, v) => String(t).replace(/{(\w+)}/g, (x, k) => (k in v ? v[k] : x));
 const WA_DUE_DEFAULT = `আসসালামু আলাইকুম, জনাব *{name}*
@@ -321,13 +333,13 @@ A/C: 1311004670665
 ইতিমধ্যে পরিশোধ করে থাকলে এই বার্তা উপেক্ষা করবেন। ধন্যবাদ।
 — ব্যবসা উন্নয়ন ফোরাম
 ফোন: ০১৩২৪৮৮৪৪৮৮`;
-function dueNoticePage(m) {
+function dueNoticePage(m, forPdf) {
   const ds = dueState(m.id), link = dueUrl(m.id);
   const rows = ds.open.map((d, i) => `<tr><td>${bn(i + 1)}</td><td>${e(dueLabel(d))}<div class="s">${e(d.ref || '')}</div></td><td>${e(bnDate(d.due_date || d.date))}</td><td class="r">${d.days > 0 ? bn(d.days) + ' দিন' : '–'}</td><td class="r b">৳ ${bdNum(d.left)}</td></tr>`).join('');
   const body = ds.total > 0
     ? `<table><thead><tr><th>#</th><th>বিবরণ</th><th>জমার তারিখ</th><th class="r">বিলম্ব</th><th class="r">বকেয়া</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="4" class="r">মোট বকেয়া</td><td class="r">৳ ${bdNum(ds.total)}</td></tr></tfoot></table>`
     : `<div class="ok">✅ আপনার কোনো বকেয়া নেই। আপনার সহযোগিতার জন্য ধন্যবাদ।</div>`;
-  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>বকেয়া নোটিশ — ${e(m.id)}</title><meta property="og:title" content="বকেয়া নোটিশ — ব্যবসা উন্নয়ন ফোরাম"><meta property="og:description" content="সদস্য নং ${e(m.id)} · বিস্তারিত নোটিশ ও জমা দেওয়ার তথ্য"><meta property="og:image" content="https://rbdf.org/logo.png">
+  return `<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>বকেয়া নোটিশ — ${e(m.id)}</title><meta property="og:title" content="বকেয়া নোটিশ — ব্যবসা উন্নয়ন ফোরাম"><meta property="og:description" content="সদস্য নং ${e(m.id)} · বিস্তারিত নোটিশ ও জমা দেওয়ার তথ্য"><meta property="og:image" content="https://member.rbdf.org/icon-192.png"><meta property="og:image:width" content="192"><meta property="og:image:height" content="192"><link rel="icon" href="https://member.rbdf.org/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#EEF1F5;font-family:'Hind Siliguri',Inter,Arial,sans-serif;color:#2B3445;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -345,7 +357,7 @@ tfoot td{background:#EAF7F0;font-weight:700;font-size:16px;color:#0D6446;border-
 @media(max-width:640px){.hd img{max-width:55%}.hd{flex-wrap:wrap}.tt span{font-size:17px;padding:7px 24px}.mt{grid-template-columns:1fr}.pay{grid-template-columns:1fr}table{font-size:13px}th,td{padding:7px 6px}}
 @media print{@page{size:A4;margin:10mm}body{background:#fff}.bar{display:none}.pg{border:0;border-radius:0;margin:0;max-width:none}}
 </style></head><body>
-<div class="bar"><button onclick="print()">📄 পিডিএফ ডাউনলোড / প্রিন্ট</button><a href="tel:01324884488">📞 যোগাযোগ</a></div>
+${forPdf ? '<style>.bar{display:none!important}body{background:#fff}.pg{border:0;margin:0;border-radius:0}</style>' : ''}<div class="bar"><button onclick="print()">📄 পিডিএফ ডাউনলোড / প্রিন্ট</button><a href="tel:01324884488">📞 যোগাযোগ</a></div>
 <div class="pg"><div class="hd"><img src="https://rbdf.org/logo.png" alt=""><div class="t"><b>রিয়াজউদ্দিন বাজার ব্যবসা উন্নয়ন ফোরাম</b><span>দোকান নং ৩, ২য় তলা, এস এস টাওয়ার, গোটহাট, ১৯ সেন্ট্রাল রোড, কোতোয়ালি, চট্টগ্রাম</span></div></div>
 <div class="tt"><span>বকেয়া নোটিশ · DUE NOTICE</span></div>
 <div class="mt"><div><b>নোটিশের তারিখ:</b>${e(bnDate(today()))}</div><div><b>সদস্য নং:</b>${e(m.id)}</div><div><b>সদস্যের নাম:</b>${e(m.name_bn || m.name_en)}</div><div><b>মোবাইল:</b>${e(bn(m.mobile || ''))}</div></div>
@@ -809,7 +821,7 @@ ${tbl(['#', 'Due date', 'Instalment', 'Paid', 'Balance', 'Status'], ins.map(i =>
     const list = aud === 'due' ? all.filter(m => dueState(m.id).total > 0) : aud === 'exec' ? all.filter(m => /President|Secretary|Treasurer|Executive/i.test(m.role)) : aud === 'advisor' ? all.filter(m => /Advisor/i.test(m.role)) : all;
     const wa = m => { const d = String(m.mobile || '').replace(/\D/g, ''); return d.length === 11 && d.startsWith('01') ? '88' + d : d; };
     const text = m => waFill(msg, waDueVars(m));
-    const rows = list.map(m => [e(m.name_en) + '<div class="mut">' + e(m.id) + '</div>', e(m.mobile), money(dueState(m.id).total), `<a class="btn o s" target="_blank" rel="noopener" href="${dueUrl(m.id)}">Notice PDF</a>`, wa(m).length >= 11 ? `<a class="btn s" target="_blank" rel="noopener" href="https://wa.me/${wa(m)}?text=${encodeURIComponent(text(m))}">Open WhatsApp</a>` : '<span class="mut">No valid number</span>']);
+    const rows = list.map(m => [e(m.name_en) + '<div class="mut">' + e(m.id) + '</div>', e(m.mobile), money(dueState(m.id).total), `<a class="btn o s" target="_blank" rel="noopener" href="${duePdfUrl(m.id)}">Notice PDF</a>`, wa(m).length >= 11 ? `<a class="btn s" target="_blank" rel="noopener" href="https://wa.me/${wa(m)}?text=${encodeURIComponent(text(m))}">Open WhatsApp</a>` : '<span class="mut">No valid number</span>']);
     const sample = list[0] ? text(list[0]) : '';
     out('/admin/whatsapp', 'WhatsApp messages', 'No API needed. Each button opens WhatsApp (Business app or WhatsApp Web) with the message ready; press Send there. The message carries a link to that member\'s own Due Notice page, which opens as a neat A4 notice and can be saved as a PDF.', `<form class="card grid" style="max-width:760px;margin-bottom:14px"><label>Send to<select name="aud">${[['due', 'Members with dues'], ['all', 'All active members'], ['exec', 'Executive committee'], ['advisor', 'Advisors']].map(([k, l]) => `<option value="${k}" ${aud === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label><label>Message (use {name} {member_id} {due} {list} {month} {last} {date} {link})<textarea name="msg" rows="14" style="font-family:inherit">${e(msg)}</textarea></label><div class="row">${TPL.map(([l, t]) => `<a class="chip" href="?aud=${e(aud)}&msg=${encodeURIComponent(t)}">${e(l)}</a>`).join(' ')}</div><button class="btn">Update list &amp; preview</button></form>
 <div class="g2" style="margin-bottom:14px"><div class="card"><b>Preview (first member in the list)</b><pre style="white-space:pre-wrap;font-family:inherit;margin:10px 0 0;background:#E7F6E0;border-radius:12px;padding:12px;font-size:14px;line-height:1.6">${e(sample)}</pre></div><form method="post" class="card grid" style="align-content:start" onsubmit="this.msg.value=document.querySelector('textarea[name=msg][rows]').value">${hid({ act: 'savewa' })}<b>Standard monthly message</b><p class="mut" style="margin:0">Keep this message as the standard text every month. Names, amounts, month and link fill in by themselves.</p><textarea name="msg" style="display:none">${e(msg)}</textarea><button class="btn">Save current text as standard</button></form></div>${tbl(['Member', 'Mobile', 'Due', 'Notice', ''], rows)}<p class="mut">${list.length} members. Messages open one by one because WhatsApp requires you to press Send for each chat. The Due Notice link is private to each member and always shows the latest dues.</p><form method="post" style="margin-top:6px">${hid({ act: 'resetwa' })}<button class="btn o s">Reset standard message to default</button></form>`);
@@ -1081,7 +1093,7 @@ http.createServer(async (req, res) => {
     const url = new URL(req.url, 'https://' + host);
     if (req.method === 'POST') { const o = req.headers.origin; if (o && new URL(o).hostname !== host) return send(res, 403, 'Bad origin'); }
     { const pm = /^\/photo\/(RBF-\d{3})\.jpg$/.exec(url.pathname); if (pm) { try { const b = fs.readFileSync(FILES + '/photos/' + pm[1] + '.jpg'); res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' }); return res.end(b); } catch { res.writeHead(404); return res.end(); } } }
-    { const dm = /^\/due\/(RBF-\d{3})\/([\w-]{16})$/.exec(url.pathname); if (dm && !host.startsWith('admin.')) { const mm0 = q1("SELECT * FROM members WHERE id=? AND id!='admin'", dm[1]); const okSig = dm[2] === dueSig(dm[1]); if (!mm0 || !okSig) return send(res, 404, page('Not found', '<div style="padding:40px">Page not found.</div>')); res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(dueNoticePage(mm0)); } }
+    { const dm = /^\/due\/(RBF-\d{3})\/([\w-]{16})(\.pdf)?$/.exec(url.pathname); if (dm && !host.startsWith('admin.')) { const mm0 = q1("SELECT * FROM members WHERE id=? AND id!='admin'", dm[1]); const okSig = dm[2] === dueSig(dm[1]); if (!mm0 || !okSig) return send(res, 404, page('Not found', '<div style="padding:40px">Page not found.</div>')); if (dm[3]) { try { const pb = await dueNoticePdf(mm0); res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="Due-Notice-' + mm0.id + '.pdf"', 'Content-Length': pb.length, 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(pb); } catch (er) { console.error('due pdf', er.message); return redirect(res, dueUrl(mm0.id)); } } res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' }); return res.end(dueNoticePage(mm0)); } }
     if (host === 'verify.rbdf.org') { if (url.searchParams.get('m')) return send(res, 200, verifyMember(url.searchParams.get('m'))); const pp = /^\/receipt\/([\w-]+)$/.exec(url.pathname); return send(res, 200, verifyPage(url.searchParams.get('r') || (pp ? pp[1] : ''))); }
     if (host === 'api.rbdf.org') {
       res.setHeader('Access-Control-Allow-Origin', '*');
